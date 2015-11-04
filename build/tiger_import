@@ -7,7 +7,7 @@ BASE=$(dirname $0)
 PATH=$PATH:$BASE
 SQL="$BASE/sql"
 HELPER_LIB="$BASE/../lib/geocoder/us/sqlite3.so"
-SHP2SQLITE=../src/shp2sqlite/shp2sqlite 
+SHP2SQLITE=src/shp2sqlite/shp2sqlite 
 DATABASE=$1
 SOURCE=$2
 shift
