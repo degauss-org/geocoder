@@ -6,4 +6,4 @@ In order to install and use the geocoder:
 - the script will symmlink a copy of `geocode.R` to `~`
 - run a list of addresses in a CSV file with the command `./geocode.R` 
     - run `./geocode.R` without any args to see instructions
-
+- test with `./geocode.R "test_addresses.csv" "address"`
