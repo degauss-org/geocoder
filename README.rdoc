@@ -1,3 +1,5 @@
+==SEE `INSTALL_AND_RUN` FOLDER FOR INSTRUCTIONS SPECIFIC TO MY FORK
+
 = Geocoder::US
 
 Geocoder::US 2.0 is a software package designed to geocode US street
