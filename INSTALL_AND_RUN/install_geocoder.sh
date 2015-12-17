@@ -66,3 +66,6 @@ sudo ruby test/run.rb /opt/tiger/geocoder.db
 # >> require 'geocoder/us'
 # >> db = Geocoder::US::Database.new("/opt/tiger/geocoder.db")
 # >> p db.geocode("1600 Pennsylvania Av, Washington DC")
+
+# symmlink R script that relies on ruby script to home directory for usage
+ln -s INSTALL_AND_RUN/geocode.R ~/geocode.R
