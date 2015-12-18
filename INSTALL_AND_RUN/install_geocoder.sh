@@ -68,4 +68,4 @@ sudo ruby test/run.rb /opt/tiger/geocoder.db
 # >> p db.geocode("1600 Pennsylvania Av, Washington DC")
 
 # symmlink R script that relies on ruby script to home directory for usage
-ln -s ~/geocoder/ INSTALL_AND_RUN/geocode.R ~/geocode.R
+ln -s ~/geocoder/INSTALL_AND_RUN/geocode.R ~/geocode.R
