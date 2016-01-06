@@ -17,7 +17,7 @@ address.col.name <- args[2]
 addresses <- read.csv(in.file,stringsAsFactors=FALSE)
 
 geocoded <- CB::CBapply(addresses[ ,address.col.name],function(x) {
-	print(paste0('geocoding ',which(addresses[ ,address.col.name]==x)[1],' of ',nrow(addresses)))
+	print(paste0('geocoding ',tail(which(addresses[ ,address.col.name]==x),1),' of ',nrow(addresses)))
 	system(paste0('ruby ~/geocoder/INSTALL_AND_RUN/geocode.rb "',x,'"'))
 	out <- jsonlite::fromJSON('temp.json')
 	return(as.data.frame(out)[1, ])	
