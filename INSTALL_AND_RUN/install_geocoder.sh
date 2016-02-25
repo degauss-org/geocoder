@@ -4,7 +4,7 @@
 sudo apt-get install sqlite3 libsqlite3-dev
 
 # install ruby if not already present
-sudo atp-get install ruby-full
+sudo apt-get install ruby-full
 
 # install rubyforge
 sudo apt-get install ruby-rubyforge
