@@ -31,15 +31,20 @@ sudo make install
 # install geocoder gem
 sudo gem install Geocoder-US-2.0.4.gem
 
-# download the full TIGER/Line files (must be 2009 files!)
+# download the full TIGER/Line files
     # rerun with -c option if fails to continue download
 cd ..
-wget -r ftp://ftp2.census.gov/geo/tiger/TIGER2009
+mkdir TIGER2015
+cd TIGER2015
+wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/ADDR/
+wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/FEATNAMES/
+wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/EDGES/
 
 # move individual files into /opt/tiger
+cd ..
 sudo mkdir /opt/tiger
-find ftp2.census.gov/geo/tiger/TIGER2009/ -name "*" -type f | xargs -I files sudo mv files /opt/tiger
-rm -r ftp2.census.gov
+find TIGER2015/ -name "*" -type f | xargs -I files sudo mv files /opt/tiger
+rm TIGER2015
 
 # import shapefile data into an SQLite database
 # WARNING this takes like what seems forever!!!
