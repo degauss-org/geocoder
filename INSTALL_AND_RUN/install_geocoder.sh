@@ -3,6 +3,9 @@
 # install SQLite 3 and development tools if not already present
 sudo apt-get install sqlite3 libsqlite3-dev
 
+# install flex
+sudo apt-get install flex
+
 # install ruby if not already present
 sudo apt-get install ruby-full
 
