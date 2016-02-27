@@ -43,8 +43,8 @@ wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/EDGES/
 # move individual files into /opt/tiger
 cd ..
 sudo mkdir /opt/tiger
-find TIGER2015/ -name "*" -type f | xargs -I files sudo mv files /opt/tiger
-rm TIGER2015
+find TIGER2015/ -name "*" | xargs -I files sudo mv files /opt/tiger
+rmdir TIGER2015
 
 # import shapefile data into an SQLite database
 # WARNING this takes like what seems forever!!!
