@@ -26,12 +26,14 @@ sudo gem install fastercsv
 
 git clone https://github.com/cole-brokamp/geocoder.git
 cd geocoder
+## building Geocoder::US
+  # compiles SQLite3 extension, the shapefile import utility, and Geocoder-US gem
 sudo make install
 
 # install geocoder gem
 sudo gem install Geocoder-US-2.0.4.gem
 
-# download the full TIGER/Line files
+## download TIGER/Line files
     # rerun with -c option if fails to continue download
 cd ..
 mkdir TIGER2015
@@ -39,19 +41,14 @@ cd TIGER2015
 wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/ADDR/
 wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/FEATNAMES/
 wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/EDGES/
-
 # move individual files into /opt/tiger
 cd ..
 sudo mkdir /opt/tiger
 find TIGER2015/ -name "*" | xargs -I files sudo mv files /opt/tiger
 rmdir TIGER2015
 
-# import shapefile data into an SQLite database
-# WARNING this takes like what seems forever!!!
+## unpack each TIGER/Line ZIP into a temp directory and extract/transform/load to build database
 cd geocoder
-# beforehand I had to fix the script by changing
-    # "SHP2SQLITE=../src/shp2sqlite/shp2sqlite" to "SHP2SQLITE=/src/shp2sqlite/shp2sqlite"
-    # should be good now with my fork of the repo
 sudo build/tiger_import /opt/tiger/geocoder.db /opt/tiger
 
 # create ruby metaphones
