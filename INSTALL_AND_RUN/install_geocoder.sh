@@ -51,6 +51,11 @@ rmdir TIGER2015
 cd geocoder
 sudo build/tiger_import /opt/tiger/geocoder.db /opt/tiger
 
+# after making the database, it is safe to remove all of the TIGER files
+sudo rm /opt/tiger/*_edges.zip
+sudo rm /opt/tiger/*_featnames.zip
+sudo rm /opt/tiger/*_addr.zip
+
 # create ruby metaphones
 sudo bin/rebuild_metaphones /opt/tiger/geocoder.db
 
