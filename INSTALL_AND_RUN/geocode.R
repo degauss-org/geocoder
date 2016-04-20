@@ -29,7 +29,6 @@ system('rm temp.json')
 
 out.file <- merge(addresses,geocoded,by.x=address.col.name,by.y='row.names',all=TRUE)
 out.file$address_call <- row.names(out.file)
-print(out.file)
 
 out.file.name <- paste0(gsub('.csv','',in.file,fixed=TRUE),'_geocoded.csv')
 write.csv(out.file,out.file.name,row.names=F)
