@@ -22,17 +22,17 @@ geocoded <- CB::CBapply(addresses.unique,function(x) {
 	print(paste0('geocoding ',tail(which(addresses.unique==x),1),' of ',length(addresses.unique)))
 	system(paste0('ruby ~/geocoder/INSTALL_AND_RUN/geocode.rb "',x,'"'))
 	out <- jsonlite::fromJSON('temp.json')
-	return(as.data.frame(out)[1, ])	
+	out <- as.data.frame(out)[1, ]
 	},fill=TRUE)
 	
-geocoded <- as.data.frame(geocoded)
-
 system('rm temp.json')
 
-out.file <- merge(addresses,geocoded,by=address.col.name,all=TRUE)
+out.file <- merge(addresses,geocoded,by.x=address.col.name,by.y='row.names',all=TRUE)
+out.file$address_call <- row.names(out.file)
+print(out.file)
 
 out.file.name <- paste0(gsub('.csv','',in.file,fixed=TRUE),'_geocoded.csv')
-write.csv(out.file,out.file.name)
+write.csv(out.file,out.file.name,row.names=F)
 
 system(paste0('csv_to_shp ',out.file.name))
 
