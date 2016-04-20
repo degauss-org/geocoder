@@ -27,14 +27,15 @@ geocoded <- CB::CBapply(addresses.unique,function(x) {
 	
 system('rm temp.json')
 
-out.file <- merge(addresses,geocoded,by.x=address.col.name,by.y='row.names',all=TRUE)
-out.file$address_call <- row.names(out.file)
+geocoded$address_call <- addresses.unique
+
+out.file <- merge(addresses,geocoded,by.x=address.col.name,by.y='address_call',all=TRUE)
 
 out.file.name <- paste0(gsub('.csv','',in.file,fixed=TRUE),'_geocoded.csv')
 write.csv(out.file,out.file.name,row.names=F)
 
 system(paste0('csv_to_shp ',out.file.name))
 
-print(paste0('FINISHED! \n    output written to ',out.file.name,'\n and to folder ',paste0(gsub('.csv','',out.file.name,fixed=TRUE)),' as a shapefile'))
+print(paste0('FINISHED! output written to ',out.file.name,'and to folder ',paste0(gsub('.csv','',out.file.name,fixed=TRUE)),' as a shapefile'))
 
 
