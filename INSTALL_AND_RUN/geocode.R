@@ -24,6 +24,8 @@ geocoded <- CB::CBapply(addresses.unique,function(x) {
 	out <- jsonlite::fromJSON('temp.json')
 	return(as.data.frame(out)[1, ])	
 	},fill=TRUE)
+	
+geocoded <- as.data.frame(geocoded)
 
 system('rm temp.json')
 
