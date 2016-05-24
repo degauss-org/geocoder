@@ -10,10 +10,7 @@ This software was designed and tested only on Linux Ubuntu.
 
 Install required software:
 
-	sudo apt-get install sqlite3 libsqlite3-dev
-	sudo apt-get install flex
-	sudo apt-get install ruby-full
-	sudo apt-get install ruby-rubyforge
+	sudo apt-get install sqlite3 libsqlite3-dev flex ruby-full ruby-rubyforge
         
 Install ruby gems:
 
