@@ -1,2 +1,4 @@
 geocoder.db
 *.db
+test_addresses_geocoded.csv
+temp.json
