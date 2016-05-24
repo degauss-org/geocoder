@@ -1,8 +1,10 @@
-# offline_geocoder
+# geocoder
 
-A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.  Designed and tested only on Linux Ubuntu.
+> A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.
 
 ## Installation
+
+This software was designed and tested only on Linux Ubuntu.
 
 ### Requirements
 
@@ -58,10 +60,36 @@ Alternatively, build your own database (see the section below for details).
 
 ## Usage
 
-For batch geocoding, run `geocoder/bin/geocode.R`, which relies on `Rscript`.  Don't forget to `chmod` this file and optionally, symmlink it somewhere or add it to your path.  Run the program without any arguments for help:
+#### Geocoding
+
+The program takes in one character string and parses address components in order to search the database.  To geocode an address, call ruby to run the program with the address string as the argument:
+
+	ruby ~/geocoder/bin/geocode.rb "3333 Burnet Ave Cincinnati Ohio 45229"
+    
+This results in a file called `temp.json` being written to the current directory with the results. It is possible to pipe this output into another file, but the user will likely be geocoding more than one file at a time, using batch geocoding.
+
+The `geocode.R` program uses the `argparser` package to take in command line arguments which define both the name of the CSV file and name of the column in that file which contain the address strings.
+
+#### Output Format
+
+- `address`: address string input to the geocoder
+- `lat`: estimated latitude coordinate
+- `lon`: estimated longitude coordinate
+- `fips_county`: estimated county; defined by FIPS id number
+- `score`: ranges from 0 to 1; higher means better match to records in database
+- `precision`: either `city`, `intersection`, `range`, `street`, or `zip`; denotes the method used to geocode
+- `street`, `zip`, `city`, `state`, `prenum`, `number`, `street1`, `street2`: the address fields found based on the input address string
+
+#### Submission for Batch Geocoding
+
+For batch geocoding, run `geocoder/bin/geocode.R`, which relies on `Rscript` to run the R program from the command line with arguments.  The R program serves as a wrapper to read the file, iterate over the address strings, output a progress bar, and write the results file as a CSV.
+
+The first argument defines the name of the CSV file and the second argument defines the name of the column in that file which contains the address strings. 
+
+Don't forget to `chmod` this file and optionally, symmlink it somewhere or add it to your path.  Run the program without any arguments for help:
 
 	  > ./geocode.R 
-	usage: ./geocode.R [--] [--help] [--CAGIS] [--opts OPTS] file_name column_name
+	usage: ./geocode.R [--] [--help] file_name column_name
 
 	offline geocoding, returns the input file with geocodes appended
 
@@ -71,14 +99,19 @@ For batch geocoding, run `geocoder/bin/geocode.R`, which relies on `Rscript`.  D
 
 	flags:
 	  -h, --help			show this help message and exit
-	  -C, --CAGIS			try to geocode based on CAGIS files? [default: FALSE]
 
 
-Test the the program out on some sample addresses:
+Test the the program out on some sample addresses that are included in the git repo:
 
 	bin/geocode.R test_addresses.csv address
+    
+    
+The program will output a progress bar to the terminal.  The output will be merged to the original input file and written as a CSV file with `_geocoded` appended to the end of the file name. Address fields not used for an address string will be `NA`. 
+    
+#### Note on Quality
 
-----------
+More work has to be done in order to use the `score` for quality assurance.  It would be useful to define some thresholds to assign `NA` rather than a wildly incorrect address.  This could also be done using the `method` field.
+
 
 ## Building TIGER/Line Database
 
@@ -116,3 +149,12 @@ Cluster the database accorindg to indexes, making lookups faster
 	chmod +x build/rebuild_cluster
 	build/rebuild_cluster ~/geocoder/geocoder.db
 
+## R Shiny Application
+
+## TODO
+
+- R Shiny application
+	- progress bar for lower number of geocodes
+    - alternative batch submission for larger number of geocodes
+- Accuracy study with score and method
+- CAGIS geocoder implementation for local addresses
