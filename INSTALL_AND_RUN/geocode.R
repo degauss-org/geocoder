@@ -8,7 +8,7 @@ library(argparser)
 p <- arg_parser('offline geocoding, returns the input file with geocodes appended')
 p <- add_argument(p,'file_name',help='name of input csv file')
 p <- add_argument(p,'column_name',help='the name of the column in the csv file that contains the address strings')
-p <- add_argument(p,'--CAGIS',help='try to geocode based on CAGIS files?',default=FALSE,flag=TRUE)
+# p <- add_argument(p,'--CAGIS',help='try to geocode based on CAGIS files?',default=FALSE,flag=TRUE)
 args <- parse_args(p)
 
 in.file <- args$file_name
@@ -34,8 +34,10 @@ out.file <- merge(addresses,geocoded,by.x=address.col.name,by.y='address_call',a
 out.file.name <- paste0(gsub('.csv','',in.file,fixed=TRUE),'_geocoded.csv')
 write.csv(out.file,out.file.name,row.names=F)
 
-system(paste0('csv_to_shp ',out.file.name))
+print(paste0('FINISHED! output written to ',out.file.name))
 
-print(paste0('FINISHED! output written to ',out.file.name,'and to folder ',paste0(gsub('.csv','',out.file.name,fixed=TRUE)),' as a shapefile'))
+# system(paste0('csv_to_shp ',out.file.name))
+
+# print(paste0('FINISHED! output written to ',out.file.name,'and to folder ',paste0(gsub('.csv','',out.file.name,fixed=TRUE)),' as a shapefile'))
 
 
