@@ -23,7 +23,7 @@ geocoded <- CB::cb_apply(addresses.unique,function(x) {
 	system(paste0('ruby ~/geocoder/bin/geocode.rb "',x,'"'))
 	out <- jsonlite::fromJSON('temp.json')
 	out <- as.data.frame(out)[1, ]
-	},fill=TRUE)
+	},fill=TRUE,pb=TRUE)
 	
 system('rm temp.json')
 
