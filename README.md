@@ -83,7 +83,7 @@ For batch geocoding, run `geocoder/bin/geocode.R`, which relies on `Rscript` to 
 
 The first argument defines the name of the CSV file and the second argument defines the name of the column in that file which contains the address strings. 
 
-Don't forget to `chmod` this file and optionally, symmlink it somewhere or add it to your path.  Run the program without any arguments for help:
+Don't forget to `chmod` this file and optionally, symmlink it somewhere (`ln -s ~/geocoder/INSTALL_AND_RUN/geocode.R ~/geocode.R`) or add it to your path.  Run the program without any arguments for help:
 
 	  > ./geocode.R 
 	usage: ./geocode.R [--] [--help] file_name column_name
