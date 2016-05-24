@@ -47,9 +47,9 @@ Download the git repo to the home directory and then compile the SQLite3 extensi
 
 ### TIGER/Line Database
 
-The program relies on a sqlite3 database created from TIGER/Line files. Download the compiled database based on 2015 TIGER/Line files into the `geocoder` directory. If you wish to store the database elsewhere, make sure to update `geocode.rb` accordingly:
+The program relies on a sqlite3 database created from TIGER/Line files that is about 4.6 GB. Download the compiled database based on 2015 TIGER/Line files into the `/opt` directory so it is accessible by all users.
 
-	wget https://colebrokamp-dropbox.s3.amazonaws.com/geocoder.db
+	sudo wget https://colebrokamp-dropbox.s3.amazonaws.com/geocoder.db -P /opt
 
 
 Alternatively, build your own database (see the section below for details).
@@ -124,7 +124,7 @@ Although a compiled database created from 2015 TIGER/Line files is available for
 If the download fails, rerun with `-c` option to continue where it left off.
     
 #### Unpack each TIGER/Line ZIP into a temp directory and extract/transform/load to build database
-	sudo build/tiger_import geocoder/geocoder.db TIGER2015
+	sudo build/tiger_import /opt/geocoder.db TIGER2015
 
 After making the database, it is safe to remove all of the TIGER files
 
@@ -134,17 +134,17 @@ After making the database, it is safe to remove all of the TIGER files
 
 Create ruby metaphones
 
-	bin/rebuild_metaphones ~/geocoder/geocoder.db
+	sudo bin/rebuild_metaphones /opt/geocoder.db
 
 Construct database indexes
 
-	chmod +x build/build_indexes
-	build/build_indexes ~/geocoder/geocoder.db
+	sudo chmod +x build/build_indexes
+	sudo build/build_indexes /opt/geocoder.db
 
 Cluster the database accorindg to indexes, making lookups faster
 
-	chmod +x build/rebuild_cluster
-	build/rebuild_cluster ~/geocoder/geocoder.db
+	sudo chmod +x build/rebuild_cluster
+	sudo build/rebuild_cluster /opt/geocoder.db
 
 ## R Shiny Application
 
