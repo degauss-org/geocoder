@@ -31,9 +31,9 @@ Install R:
 
 Install R packages:
 
-	sudo su - -c "R -e \"install.packages('devtools', repos='http://cran.rstudio.com/')\""
+	sudo su - -c "R -e \"install.packages('devtools', repos='https://cran.rstudio.com/')\""
 	sudo su - -c "R -e \"devtools::install_github('cole-brokamp/CB')\""
-	sudo su - -c "R -e \"install.packages('argparser', repos='http://cran.rstudio.com/')\""
+	sudo su - -c "R -e \"install.packages('argparser', repos='https://cran.rstudio.com/')\""
 
 ### Download and Install
 
