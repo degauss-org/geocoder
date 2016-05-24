@@ -3,7 +3,7 @@ require 'csv'
 require 'geocoder/us'
 require 'json'
 
-db = Geocoder::US::Database.new("/opt/tiger/geocoder.db")
+db = Geocoder::US::Database.new("~/geocoder/geocoder.db")
 
 out = db.geocode(ARGV[0])
 
