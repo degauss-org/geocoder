@@ -1,9 +1,2 @@
-*.o
-*.so
-*.gem
-pkg/
-bin/shp2sqlite
-src/shp2sqlite/shp2sqlite
-src/liblwgeom/liblwgeom.a
-doc/*.html
-*.log
+geocoder.db
+*.db
