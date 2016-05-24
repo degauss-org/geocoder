@@ -19,8 +19,8 @@ addresses <- read.csv(in.file,stringsAsFactors=FALSE)
 addresses.unique <- unique(addresses[ ,address.col.name])
 
 geocoded <- CB::cb_apply(addresses.unique,function(x) {
-	print(paste0('geocoding ',tail(which(addresses.unique==x),1),' of ',length(addresses.unique)))
-	system(paste0('ruby ~/geocoder/INSTALL_AND_RUN/geocode.rb "',x,'"'))
+	# print(paste0('geocoding ',tail(which(addresses.unique==x),1),' of ',length(addresses.unique)))
+	system(paste0('ruby ~/geocoder/bin/geocode.rb "',x,'"'))
 	out <- jsonlite::fromJSON('temp.json')
 	out <- as.data.frame(out)[1, ]
 	},fill=TRUE)
