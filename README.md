@@ -147,12 +147,3 @@ Cluster the database accorindg to indexes, making lookups faster
 	sudo chmod +x build/rebuild_cluster
 	sudo build/rebuild_cluster /opt/geocoder.db
 
-## R Shiny Application
-
-## TODO
-
-- R Shiny application
-	- progress bar for lower number of geocodes
-    - alternative batch submission for larger number of geocodes
-- Accuracy study with score and method
-- CAGIS geocoder implementation for local addresses
