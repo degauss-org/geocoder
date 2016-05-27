@@ -2,6 +2,9 @@
 
 > A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.
 
+This software is a fork of https://github.com/geocommons/geocoder.  The spellfix update from the fork at 
+https://github.com/mb16/geocoder has also been included.
+
 ## Installation
 
 This software was designed and tested only on Linux Ubuntu.
