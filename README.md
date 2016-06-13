@@ -7,7 +7,7 @@ https://github.com/mb16/geocoder has also been included.
 
 ## Installation
 
-This software was designed and tested only on Linux Ubuntu.
+This software was designed and tested only on Linux Ubuntu and CentOS.  The following install instructions are for Ubuntu; see the section at the bottom of this file for CentOS install instructions.
 
 ### Requirements
 
@@ -149,4 +149,52 @@ Cluster the database accorindg to indexes, making lookups faster
 
 	sudo chmod +x build/rebuild_cluster
 	sudo build/rebuild_cluster /opt/geocoder.db
+
+
+## Installation on CentOS 7
+
+Before installation (all takes place under sudo) 
+
+  	sudo su -
+
+Install software dependencies:
+
+  	yum install -y sqlite sqlite-devel.x86_64 flex ruby git-core zlib zlib-devel gcc-c++ patch readline readline-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison curl sqlite-devel libcurl-devel libxml2-devel.x86_64 ruby-rdoc ruby-devel 
+
+Install Ruby gems:
+
+  	gem install sqlite3 json Text
+
+Install R:
+
+  	rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+  yum update
+  yum install R
+
+Open R:
+
+  	R --vanilla
+
+Within R, install packages:
+
+```r
+install.packages(c('devtools','argparser'),repos='https://cran.rstudio.com')
+devtools::install_github('cole-brokamp/CB')
+```
+
+Download the git repo to the home directory and then compile the SQLite3 extension and the Geocoder-US Ruby gem:
+  
+    cd ~
+    git clone https://github.com/cole-brokamp/geocoder
+    cd geocoder
+    sudo make install
+    sudo gem install Geocoder-US-2.0.4.gem
+
+Make sure to install the database as described above.
+
+#### Moving files to `root@bmigeocodep1`
+
+- copy file to personal server
+- copy file to `/tmp`
+- `sudo - su` and copy from `/tmp` to `~/tmp`
 
