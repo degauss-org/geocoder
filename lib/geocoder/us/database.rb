@@ -437,7 +437,7 @@ module Geocoder::US
               if a_place[:city_score] < lowest_city_score
                 places = temp_places
                 lowest_city_score = a_place[:city_score]
-
+                break
               end
             end
 
@@ -447,41 +447,35 @@ module Geocoder::US
         if places.class== Hash
           places = [places]
         end
-        #p places.inspect
+        p places.inspect
         #places = places_by_zip city, address.zip
 
       end
 
+      places = places_by_city city, address.city_parts, address.state if places.empty?
+      return [] if places.empty?
 
-	    places = filter_by_score places, city_score_threshold, :city_score
-	  
-	    if places.empty?
-		    places = places_by_city city, address.city_parts, address.state if places.empty?
-		    places = filter_by_score places, city_score_threshold, :city_score
-	    end
-    
-	  
-	    return [] if places.empty?
+      places = filter_by_score places, city_score_threshold, :city_score
 
       # setting city will remove city from street, so save off before
-      #p (unique_values places, :city).inspect
-      #p address.inspect
+      p (unique_values places, :city).inspect
+      p address.inspect
 
       address.city = unique_values places, :city
-      #p address.inspect
+      p address.inspect
       return places if address.street.empty?
 
-      #p places.inspect
+      p places.inspect
 
       zips = unique_values places, :zip
-      #p address.street.inspect
+      p address.street.inspect
       street = address.street.sort {|a,b|a.length <=> b.length}[0]
-      #p street.inspect
+      p street.inspect
       candidates = features_by_street_and_zip street, address.street_parts, zips
-      #p candidates
+      p candidates
 
       candidates = filter_by_score candidates, score_threshold, :street_score
-      #p candidates
+      p candidates
 
       if candidates.empty?
         candidates = features_by_street_and_zip_spellfix1 address.street, zips, score_threshold
