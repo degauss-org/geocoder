@@ -1,4 +1,3 @@
-
 # require 'rubygems'
 require 'sqlite3'
 # require 'text'
@@ -72,7 +71,7 @@ module Geocoder::US
         #   }
         #   dist = Levenshtein.distance(test1, test2)
         #   result = dist.to_f / [test1.length, test2.length].max
-        #   func.set_result result
+        #   func.set_result result 
         # end
         # @db.create_function("rb_metaphone", 2) do |func, string, len|
         #  test = string.to_s.gsub(/\W/o, "")
@@ -95,7 +94,6 @@ module Geocoder::US
         # end
         @db.enable_load_extension(1)
         @db.load_extension(helper)
-        @db.load_extension("/opt/sqlite/sqlite-src-3071700/spellfix1")
         @db.enable_load_extension(0)
         @db.cache_size = cache_size
         @db.temp_store = "memory"
@@ -134,14 +132,14 @@ module Geocoder::US
     # Execute an SQL statement, bind a list of parameters, and
     # return the result as a list of hashes.
     def execute (sql, *params)
-      st = prepare(sql)
+      st = prepare(sql) 
       begin
         execute_statement st, *params
       ensure
         st.close
       end
     end
-
+    
     # Execute an SQLite statement object, bind the parameters,
     # map the column names to symbols, and return the rows
     # as a list of hashes.
@@ -156,7 +154,7 @@ module Geocoder::US
         columns = result.columns.map {|c| c.to_sym}
         result.each {|row|
            rows << Hash[*(columns.zip(row).flatten)]}
-
+        
       end
       if @debug
         runtime = format("%.3f", Time.now - start)
@@ -164,7 +162,7 @@ module Geocoder::US
       end
       rows.reverse!
     end
-
+   
     def places_by_zip (city, zip)
       execute("SELECT *, levenshtein(?, city) AS city_score
                FROM place WHERE zip = ? order by priority desc;", city, zip)
@@ -231,48 +229,6 @@ module Geocoder::US
       execute sql, *params
     end
 
-    def features_by_street_and_zip_spellfix1 (streets, zips, score_threshold)
-      result = []
-      zips.each do |zip|
-        streets.each do |street|
-          streetlist = execute("SELECT word FROM feature_spellfix1 WHERE Top=1 AND langid = ? AND word MATCH ?", zip, street)
-          if !streetlist.empty?
-            streetsfound = []
-            streetlist.each do |item|
-              streetsfound.insert(0, item[:word])
-            end
-            result.insert(0, execute("SELECT feature.*, levenshtein(?, street) AS street_score FROM feature WHERE street = ? AND zip = ?", street, streetsfound[0],zip))
-          end
-        end
-      end
-      result = result.flatten.find { |item| item[:street_score] < score_threshold}
-      if result.nil?
-        []
-      else
-        if result.class == Hash
-          [result]
-        else
-          result
-        end
-      end
-
-    end
-
-    def zips_by_county(zip,state)
-      ziplist = execute("SELECT DISTINCT zip FROM place WHERE fips_county IN (SELECT fips_county FROM place WHERE zip = ? AND state = ?)", zip, state)
-      if !ziplist.empty?
-        zipsfound = []
-        ziplist.each do |item|
-          zipsfound.insert(0, item[:zip])
-        end
-        zipsfound
-      else
-        []
-      end
-    end
-
-
-
     def ranges_by_feature (fids, number, prenum)
       in_list = placeholders_for fids
       limit = 4 * fids.length
@@ -286,7 +242,7 @@ module Geocoder::US
         sql += " AND prenum = ?"
         params += [prenum]
       end
-      sql += "
+      sql += " 
           ORDER BY min(abs(fromhn - ?), abs(tohn - ?))
           LIMIT #{limit};"
       params += [number, number]
@@ -311,7 +267,7 @@ module Geocoder::US
               FROM range WHERE tlid IN (#{in_list})
               GROUP BY tlid, side;"
       execute(sql, *edge_ids).map {|r|
-        if r[:flipped].to_i == 1
+	if r[:flipped].to_i == 1
           r[:flipped] = true
           r[:fromhn], r[:tohn] = r[:from1], r[:to1]
         else
@@ -333,12 +289,12 @@ module Geocoder::US
         sql = "
           CREATE TABLE #{temp_db}.#{temp_table} AS
             SELECT fid, substr(geometry,1,8) AS point
-                FROM feature_edge, edge
+                FROM feature_edge, edge 
                 WHERE feature_edge.tlid = edge.tlid
                 AND fid IN (#{in_list})
             UNION
             SELECT fid, substr(geometry,length(geometry)-7,8) AS point
-                FROM feature_edge, edge
+                FROM feature_edge, edge 
                 WHERE feature_edge.tlid = edge.tlid
                 AND fid IN (#{in_list});
           CREATE INDEX #{temp_db}.#{temp_table}_pt_idx ON #{temp_table} (point);"
@@ -346,7 +302,7 @@ module Geocoder::US
         # the a.fid < b.fid inequality guarantees consistent ordering of street
         # names in the output
         sql = "
-          SELECT a.fid AS fid1, b.fid AS fid2, a.point
+          SELECT a.fid AS fid1, b.fid AS fid2, a.point 
               FROM #{temp_table} a, #{temp_table} b,
                    feature f1, feature f2
               WHERE a.point = b.point AND a.fid < b.fid
@@ -398,115 +354,28 @@ module Geocoder::US
       dest.flatten!
     end
 
-    def filter_by_score (items, score, key)
-        result = []
-        items = items.flatten
-        if items == Hash
-          items = [items]
-        end
-
-        for item in items
-          if item[key] < score
-            result.insert(0, item)
-          end
-        end
-        result
-    end
-
     def find_candidates (address)
-      score_threshold = 0.65
-      city_score_threshold = 0.5
-
       places = []
       candidates = []
 
       city = address.city.sort {|a,b|a.length <=> b.length}[0]
       if(!address.zip.empty? && !address.zip.nil?)
-        parts = city.split
-        count = parts.length
-        temp_city = ""
-        lowest_city_score = 1.0
-        (count - 1).downto(0) { |i|
-          temp_city.insert(0, parts[i] + " ")
-          temp_places = places_by_zip temp_city, address.zip
-          if !temp_places.nil? && !temp_places.empty?
-            if temp_places.class == Hash
-               temp_places = [temp_places]
-            end
-            for a_place in temp_places
-              if a_place[:city_score] < lowest_city_score
-                places = temp_places
-                lowest_city_score = a_place[:city_score]
-                break
-              end
-            end
-
-          end
-        }
-        places.flatten!
-        if places.class== Hash
-          places = [places]
-        end
-        p places.inspect
-        #places = places_by_zip city, address.zip
-
+         places = places_by_zip city, address.zip 
       end
-
       places = places_by_city city, address.city_parts, address.state if places.empty?
       return [] if places.empty?
 
-      places = filter_by_score places, city_score_threshold, :city_score
-
       # setting city will remove city from street, so save off before
-      p (unique_values places, :city).inspect
-      p address.inspect
-
       address.city = unique_values places, :city
-      p address.inspect
       return places if address.street.empty?
-
-      p places.inspect
-
+      
       zips = unique_values places, :zip
-      p address.street.inspect
       street = address.street.sort {|a,b|a.length <=> b.length}[0]
-      p street.inspect
       candidates = features_by_street_and_zip street, address.street_parts, zips
-      p candidates
-
-      candidates = filter_by_score candidates, score_threshold, :street_score
-      p candidates
 
       if candidates.empty?
-        candidates = features_by_street_and_zip_spellfix1 address.street, zips, score_threshold
+        candidates = more_features_by_street_and_zip street, address.street_parts, zips
       end
-
-      candidates = filter_by_score candidates, score_threshold, :street_score
-
-
-      if (candidates.empty? && !address.zip.empty? && !address.zip.nil? && !address.state.empty? && !address.state.nil?)
-        extrazips = zips_by_county(address.zip, address.state)
-        if !extrazips.empty?
-          candidates = features_by_street_and_zip street, address.street_parts, extrazips
-          if candidates.empty?
-            candidates.insert(0, (features_by_street_and_zip_spellfix1 address. street, extrazips, score_threshold))
-          end
-          extrazips.each do |zip|
-            places.insert(0, (places_by_zip city, zip))
-          end
-          candidates = (candidates.flatten).to_a
-          places = (places.flatten).to_a
-        end
-      end
-
-
-      #p candidates.inspect
-      #p places.inspect
-
-      if candidates.empty?
-            candidates = more_features_by_street_and_zip street, address.street_parts, zips
-      end
-
 
       merge_rows! candidates, places, :zip
       candidates
@@ -551,8 +420,6 @@ module Geocoder::US
 
     def extend_ranges! (candidates)
       edge_ids    = merge_edges! candidates
-      edge_ids    = merge_edges! candidates
-      edge_ids    = merge_edges! candidates
       full_ranges = range_ends edge_ids
       merge_rows! candidates, full_ranges, :tlid, :side
     end
@@ -590,13 +457,13 @@ module Geocoder::US
           candidate[:components][key] = item_score
           score += item_score
         }
-
+       
         if address.number and !address.number.empty?
           parity = subscore = 0.0
           fromhn, tohn, assigned, hn = [
-              candidate[:fromhn],
-              candidate[:tohn],
-              candidate[:number],
+              candidate[:fromhn], 
+              candidate[:tohn], 
+              candidate[:number], 
               address.number].map {|s|s.to_i}
           if candidate[:precision] == :range
             subscore += Number_Weight
@@ -652,7 +519,7 @@ module Geocoder::US
     # compress_wkb_line() function in the SQLite helper extension.
     def unpack_geometry (geom)
       points = []
-      if !geom.nil?
+      if !geom.nil?       
         if @dbtype == 2
           # For special case?
           #| 1 byte Type | 4 byte SRID | 4 byte element count| 8 byte double coordinates *
@@ -682,7 +549,7 @@ module Geocoder::US
     # along the longitudinal axis by scale_lon.
     def distance (a, b)
       dx = (b[0] - a[0]) * scale_lon(a[1], b[1])
-      dy = (b[1] - a[1])
+      dy = (b[1] - a[1]) 
       Math.sqrt(dx ** 2 + dy ** 2)
     end
 
@@ -710,8 +577,8 @@ module Geocoder::US
     # Offset is in degrees and defaults to ~8 meters.
     def interpolate (points, fraction, side, offset=0.000075)
       $stderr.print "POINTS: #{points.inspect}" if @debug
-      return points[0] if fraction == 0.0
-      return points[-1] if fraction == 1.0
+      return points[0] if fraction == 0.0 
+      return points[-1] if fraction == 1.0 
       total = 0.0
       (1...points.length).each {|n| total += distance(points[n-1], points[n])}
       target = total * fraction
@@ -746,12 +613,12 @@ module Geocoder::US
         top_priority = current_places.map{|p| p[:priority]}.min
         current_places.select {|p| p[:priority] == top_priority}.map {|p|
           record.merge({
-            :city => p[:city],
-            :state => p[:state],
+            :city => p[:city], 
+            :state => p[:state], 
             :fips_county => p[:fips_county]
           })
         }
-      }
+      } 
       candidates.flatten!
     end
 
@@ -772,14 +639,14 @@ module Geocoder::US
     def best_places (address, places, canonicalize=false)
       return [] unless !places.empty?
       score_candidates! address, places
-      best_candidates! places
+      best_candidates! places 
       canonicalize_places! places if canonicalize
 
       # uniqify places
       by_name = rows_to_h(places, :city, :state)
       if !by_name.nil?
         begin
-          by_name.values.each {|v|
+          by_name.values.each {|v| 
              v.sort! {|a,b|
                a[:zip] <=> b[:zip]
              }}
@@ -787,7 +654,7 @@ module Geocoder::US
 
             end
       places = by_name.map {|k,v| v[0]}
-
+   
       places.each {|record| clean_record! record}
       places.each {|record|
         record[:precision] = (record[:zip] == address.zip ? :zip : :city)
@@ -824,9 +691,9 @@ module Geocoder::US
         record
       }
       #pp(intersects)
-
+      
       score_candidates! address, intersects
-      best_candidates! intersects
+      best_candidates! intersects 
 
       by_point = rows_to_h(intersects, :lon, :lat)
       candidates = by_point.values.map {|records| records[0]}
@@ -846,13 +713,13 @@ module Geocoder::US
       return best_places(address, candidates, canonical_place) if candidates[0][:street].nil?
 
       score_candidates! address, candidates
-      best_candidates! candidates
-
+      best_candidates! candidates 
+    
       #candidates.sort {|a,b| b[:score] <=> a[:score]}.each {|candidate|
       add_ranges! address, candidates
       score_candidates! address, candidates
       #pp candidates.sort {|a,b| b[:score] <=> a[:score]}
-      best_candidates! candidates
+      best_candidates! candidates 
 
       # sometimes multiple fids match the same tlid
       by_tlid = rows_to_h candidates, :tlid
@@ -879,7 +746,7 @@ module Geocoder::US
         found = interpolate points, dist, side
         record[:lon], record[:lat] = found.map {|x| format("%.6f", x).to_f}
       }
-
+      
       canonicalize_places! candidates if canonical_place
 
       candidates.each {|record| clean_record! record}
