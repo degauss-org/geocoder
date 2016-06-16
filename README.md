@@ -4,13 +4,15 @@
 
 ## Installation
 
-This software was designed and tested only on Linux Ubuntu and CentOS.  The following install instructions are for Ubuntu; see the section at the bottom of this file for CentOS install instructions.
+This software was designed and tested only on Linux Ubuntu. The following install instructions are for Ubuntu. CentOS install instructions are also below, but are not tested.
+
+As an alternative to the usual installation, a dockerfile is available. (To download the dockerfile without cloning the entire repo use `wget https://github.com/cole-brokamp/geocoder/blob/master/Dockerfile`). Install docker, start the docker service (`service docker start`), build the docker image (`docker build -t geocoder .`) and run it interactively for a prompt (`docker run -it geocoder`). 
 
 ### Requirements
 
 Install required software:
 
-	sudo apt-get install sqlite3 libsqlite3-dev flex ruby-full ruby-rubyforge
+	sudo apt-get install sqlite3 libsqlite3-dev flex ruby-full ruby-rubyforge libssl-dev libssh2-1-dev libcurl4-openssl-dev curl libxml2-dev
         
 Install ruby gems:
 
