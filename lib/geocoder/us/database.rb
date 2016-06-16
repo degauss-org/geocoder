@@ -437,7 +437,7 @@ module Geocoder::US
               if a_place[:city_score] < lowest_city_score
                 places = temp_places
                 lowest_city_score = a_place[:city_score]
-
+                break
               end
             end
 
