@@ -56,6 +56,6 @@ RUN git clone https://github.com/cole-brokamp/bash_setup \
     
 RUN wget https://colebrokamp-dropbox.s3.amazonaws.com/geocoder.db -P /opt
 
-RUN apt-get install screen -y
+RUN apt-get install screen nano -y
 
 CMD /bin/bash
