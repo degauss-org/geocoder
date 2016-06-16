@@ -196,3 +196,8 @@ Make sure to install the database as described above.
 - copy file to `/tmp`
 - `sudo su -` and copy from `/tmp` to `~/tmp`
 
+#### Moving files from machine to docker container
+
+- get short container id with `docker ps`
+- copy file `docker cp foo.txt <short-container-id>:/root/foo.txt`
+
