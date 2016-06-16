@@ -6,7 +6,8 @@
 
 This software was designed and tested only on Linux Ubuntu. The following install instructions are for Ubuntu. CentOS install instructions are also below, but are not tested.
 
-As an alternative to the usual installation, a dockerfile is available. (To download the dockerfile without cloning the entire repo use `wget https://github.com/cole-brokamp/geocoder/blob/master/Dockerfile`). Install docker, start the docker service (`service docker start`), build the docker image (`docker build -t geocoder .`) and run it interactively for a prompt (`docker run -it geocoder`). 
+As an alternative to the usual installation, a dockerfile is available. (To download the 
+dockerfile without cloning the entire repo use `https://github.com/cole-brokamp/geocoder/blob/master/Dockerfile`). Install docker, start the docker service (`service docker start`), build the docker image (`docker build -t geocoder .`) and run it interactively for a prompt (`docker run -it geocoder`). 
 
 ### Requirements
 
