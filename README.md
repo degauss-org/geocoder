@@ -147,7 +147,6 @@ Cluster the database accorindg to indexes, making lookups faster
 	sudo chmod +x build/rebuild_cluster
 	sudo build/rebuild_cluster /opt/geocoder.db
 
-
 ## Installation on CentOS 7
 
 Before installation (all takes place under sudo) 
