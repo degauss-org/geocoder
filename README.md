@@ -6,7 +6,8 @@
 
 This software was designed and tested only on Linux Ubuntu. The following install instructions are for Ubuntu. CentOS install instructions are also below, but are not tested.
 
-As an alternative to the usual installation, a dockerfile is available. (To download the dockerfile without cloning the entire repo use `wget https://raw.githubusercontent.com/cole-brokamp/geocoder/master/Dockerfile`). Install docker, start the docker service (`service docker start`), build the docker image (`docker build -t geocoder .`) and run it interactively for a prompt (`docker run -it geocoder`). 
+As an alternative to the usual installation, a docker image that contains everything needed is available from Docker Hub. Use `docker run -it colebrokamp/geocoder` to pull and load the image. This will take a while 
+because it does include the TIGER database file. (If installing from behind a proxy, see [this article](https://docs.docker.com/engine/admin/systemd/#http-proxy) about configuring `HTTP_PROXY`.
 
 ### Requirements
 
