@@ -4,6 +4,7 @@ temp.json
 *.so
 *.gem
 bin/shp2sqlite
+build/shp2sqlite
 src/shp2sqlite/shp2sqlite
 src/liblwgeom/liblwgeom.a
 *.log
