@@ -24,7 +24,7 @@ geocoded <- CB::cb_apply(addresses.unique,function(x) {
 	    out <- jsonlite::fromJSON('temp.json')
 	    out <- as.data.frame(out)[1, ]
 	    return(out)
-	    },error=function(e)NULL)
+	    },error=function(e)NA)
 	},fill=TRUE,pb=TRUE,parallel=TRUE)
 	
 system('rm temp.json')
