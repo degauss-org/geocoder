@@ -20,10 +20,10 @@ addresses.unique <- unique(addresses[ ,address.col.name])
 
 geocoded <- CB::cb_apply(addresses.unique,function(x) {
     tryCatch({
-	    system(paste0('ruby ~/geocoder/bin/geocode.rb "',x,'"'))
-	    out <- jsonlite::fromJSON('temp.json')
+        tf <- tempfile()
+	    system(paste0('ruby ~/geocoder/bin/geocode.rb "',x,'"',' "',tf,'"'))
+	    out <- jsonlite::fromJSON(tf)
 	    out <- as.data.frame(out)[1, ]
-	    return(out)
 	    },error=function(e)data.frame('lat'=NA,'lon'=NA))
 	},fill=TRUE,pb=TRUE,parallel=TRUE)
 	
