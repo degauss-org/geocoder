@@ -6,10 +6,7 @@
 
 ## Installation
 
-This software was designed and tested on Linux Ubuntu. The following install instructions are for Ubuntu. CentOS install instructions are also below, but are not throughly tested.
-
-As an alternative to the usual installation, a dockerfile is included in the repo. Building will take a while 
-because it does include the TIGER database file. (If installing from behind a proxy, see [this article](https://docs.docker.com/engine/admin/systemd/#http-proxy) about configuring `HTTP_PROXY`.
+This software was designed and tested on Linux Ubuntu. The following install instructions are for Ubuntu. CentOS install instructions are also below, but are not throughly tested. See the below instructions for using this with Docker.
 
 ### Requirements
 
@@ -192,3 +189,27 @@ Download the git repo to the home directory and then compile the SQLite3 extensi
     sudo gem install Geocoder-US-2.0.4.gem
 
 Make sure to install the database as described above.
+
+## Docker 
+
+As an alternative to the usual installation, docker usage may prove useful in a server setting. Download the dockerfile in this repo and build the image; building will take a while because it does include the TIGER database file. (If installing from behind a proxy, see [this article](https://docs.docker.com/engine/admin/systemd/#http-proxy) about configuring `HTTP_PROXY`.)
+
+The below is an example bash script used to run a geocoding job after the docker image has been built:
+
+```bash
+#!/bin/bash
+
+## helper script to initiate batch geocoding job inside docker container
+## first argument is name of file in "root/tmp" that is to be geocoded
+## second argument is column name of pasted address string
+
+HOSTDIR=/root/tmp
+DOCKERDIR=/root/tmp
+
+# make sure docker is running
+/bin/systemctl start docker.service
+
+# run docker image and job (map volumes and delete container when complete)
+docker run --rm=true --volume=$HOSTDIR:$DOCKERDIR colebrokamp/geocoder bash -c "./geocode.R ${DOCKERDIR}/$1 $2"
+
+```
