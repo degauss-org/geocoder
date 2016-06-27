@@ -27,7 +27,6 @@ geocoded <- CB::cb_apply(addresses.unique,function(x) {
 	    },error=function(e)data.frame('lat'=NA,'lon'=NA))
 	},fill=TRUE,pb=TRUE,parallel=TRUE)
 	
-system('rm temp.json')
 save(geocoded,file='geocoded.RData')
 
 geocoded$address_call <- addresses.unique
