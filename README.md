@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/21831/cole-brokamp/geocoder.svg)](https://zenodo.org/badge/latestdoi/21831/cole-brokamp/geocoder)
+
 # geocoder
 
 > A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.
