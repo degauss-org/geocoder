@@ -190,15 +190,3 @@ Download the git repo to the home directory and then compile the SQLite3 extensi
     sudo gem install Geocoder-US-2.0.4.gem
 
 Make sure to install the database as described above.
-
-#### Moving files to `root@bmigeocodep1`
-
-- copy file to personal server
-- copy file to `/tmp`
-- `sudo su -` and copy from `/tmp` to `~/tmp`
-
-#### Moving files from machine to docker container
-
-- get short container id with `docker ps`
-- copy file `docker cp foo.txt <short-container-id>:/root/foo.txt`
-
