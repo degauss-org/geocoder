@@ -4,9 +4,9 @@
 
 ## Installation
 
-This software was designed and tested only on Linux Ubuntu. The following install instructions are for Ubuntu. CentOS install instructions are also below, but are not tested.
+This software was designed and tested on Linux Ubuntu. The following install instructions are for Ubuntu. CentOS install instructions are also below, but are not throughly tested.
 
-As an alternative to the usual installation, a docker image that contains everything needed is available from Docker Hub. Use `docker run -it colebrokamp/geocoder` to pull and load the image. This will take a while 
+As an alternative to the usual installation, a dockerfile is included in the repo. Building will take a while 
 because it does include the TIGER database file. (If installing from behind a proxy, see [this article](https://docs.docker.com/engine/admin/systemd/#http-proxy) about configuring `HTTP_PROXY`.
 
 ### Requirements
