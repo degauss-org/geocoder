@@ -192,24 +192,18 @@ Make sure to install the database as described above.
 
 ## Docker 
 
-As an alternative to the usual installation, docker usage may prove useful in a server setting. Download the dockerfile in this repo and build the image; building will take a while because it does include the TIGER database file. (If installing from behind a proxy, see [this article](https://docs.docker.com/engine/admin/systemd/#http-proxy) about configuring `HTTP_PROXY`.)
+As an alternative to the usual installation, docker usage may prove useful in a server setting. Download the dockerfile in this repo and build the image (`docker build -t geocoder .`). Building will take a while because it does include the TIGER database file. (If installing from behind a proxy, see [this article](https://docs.docker.com/engine/admin/systemd/#http-proxy) about configuring `HTTP_PROXY`.)
 
-The below is an example bash script used to run a geocoding job after the docker image has been built:
+The below is an example bash script used to run a geocoding job using the docker container:
 
 ```bash
 #!/bin/bash
 
-## helper script to initiate batch geocoding job inside docker container
-## first argument is name of file in "root/tmp" that is to be geocoded
+## helper script to initiate batch geocoding job with docker
+## first argument is name of file in the current working directory that is to be geocoded
 ## second argument is column name of pasted address string
 
-HOSTDIR=/root/tmp
-DOCKERDIR=/root/tmp
-
-# make sure docker is running
-/bin/systemctl start docker.service
-
 # run docker image and job (map volumes and delete container when complete)
-docker run --rm=true --volume=$HOSTDIR:$DOCKERDIR colebrokamp/geocoder bash -c "./geocode.R ${DOCKERDIR}/$1 $2"
+docker run --rm=true --volume=$PWD:/tmp geocoder bash -c "./geocode.R /tmp/$1 $2"
 
 ```
