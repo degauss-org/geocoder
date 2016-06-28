@@ -166,8 +166,8 @@ Install Ruby gems:
 Install R:
 
   	rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-  yum update
-  yum install R
+    yum update
+    yum install R
 
 Open R:
 
