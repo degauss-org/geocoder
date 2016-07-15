@@ -8,4 +8,4 @@ build/shp2sqlite
 src/shp2sqlite/shp2sqlite
 src/liblwgeom/liblwgeom.a
 *.log
-geocode_helper.sh
+geocoding.html

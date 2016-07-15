@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+
+if [[ $# < 1 ]]; then
+        echo "helper script to initiate batch geocoding job with docker"
+        echo "usage: geocode_docker file_with_addresses.csv address_column_name"
+        exit 0
+fi
+
+# run docker image and job (map volumes and delete container when complete)
+docker run --rm=true --volume=$PWD:/tmp geocoder bash -c "./geocode.R /tmp/$1 $2"
