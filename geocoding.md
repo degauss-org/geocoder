@@ -35,7 +35,7 @@ An example input CSV file might look like:
 - abbreviations may be used (i.e. `St.` instead of `Street` or `OH` instead of `Ohio`)
 - use arabic numerals instead of written numbers (i.e. `13` instead of `thirteen`)
 - spelling should be as accurate as possible, but the program does complete "fuzzy matching" so an exact match is not necessary
-
+- address strings with out of order items will likely return NA (i.e. `3333 Burnet Ave Cincinnati 45229 OH`)
 
 ### Output Format
 
