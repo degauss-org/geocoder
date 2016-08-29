@@ -12,7 +12,7 @@ See [geocoding.md](geocoding.md) for a description of how this service works and
 
 As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. Pull the image with `docker pull colebrokamp/geocoder`.
 
-The below is an example bash script used to run a geocoding job using the docker container:
+The below is an example bash script used to run a batch geocoding job using the docker container:
 
 ```bash
 #!/bin/bash
@@ -91,16 +91,6 @@ This results in a file called `temp.json` being written to the current directory
 
 The `geocode.R` program uses the `argparser` package to take in command line arguments which define both the name of the CSV file and name of the column in that file which contain the address strings.
 
-#### Output Format
-
-- `address`: address string input to the geocoder
-- `lat`: estimated latitude coordinate
-- `lon`: estimated longitude coordinate
-- `fips_county`: estimated county; defined by FIPS id number
-- `score`: ranges from 0 to 1; higher means better match to records in database
-- `precision`: either `city`, `intersection`, `range`, `street`, or `zip`; denotes the method used to geocode
-- `street`, `zip`, `city`, `state`, `prenum`, `number`, `street1`, `street2`: the address fields found based on the input address string
-
 #### Submission for Batch Geocoding
 
 For batch geocoding, run `geocoder/bin/geocode.R`, which relies on `Rscript` to run the R program from the command line with arguments.  The R program serves as a wrapper to read the file, iterate over the address strings, output a progress bar, and write the results file as a CSV.
@@ -129,10 +119,6 @@ Test the the program out on some sample addresses that are included in the git r
 
 
 The program will output a progress bar to the terminal.  The output will be merged to the original input file and written as a CSV file with `_geocoded` appended to the end of the file name. Address fields not used for an address string will be `NA`.
-
-#### Note on Quality
-
-More work has to be done in order to use the `score` for quality assurance.  It would be useful to define some thresholds to assign `NA` rather than a wildly incorrect address.  This could also be done using the `method` field.
 
 
 ## Building TIGER/Line Database
