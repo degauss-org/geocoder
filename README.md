@@ -22,7 +22,7 @@ The below is an example bash script used to run a batch geocoding job using the 
 ## second argument is column name of pasted address string
 
 # run docker image and job (map volumes and delete container when complete)
-docker run --name=geocoder--rm=true --volume=$PWD:/tmp geocoder bash -c "./geocode.R /tmp/$1 $2"
+docker run --name=geocoder--rm=true --volume=$PWD:/tmp colebrokamp/geocoder bash -c "./geocode.R /tmp/$1 $2"
 
 ```
 
