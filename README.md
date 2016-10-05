@@ -8,7 +8,8 @@ See [geocoding.md](geocoding.md) for a description of how this service works and
 
 ## Installation and Usage with Docker
 
-As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. Build the image with the enclosed Dockerfile: `docker build -t colebrokamp/geocoder .`
+As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. Build the image with the enclosed Dockerfile: `docker build -t colebrokamp/geocoder .` Or pull the 
+image with `docker pull colebrokamp/geocoder`; make sure to login with `docker login` first because the image is private.
 
 The below is an example bash script used to run a batch geocoding job using the docker container:
 
