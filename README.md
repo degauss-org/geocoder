@@ -1,6 +1,4 @@
 [![DOI](https://zenodo.org/badge/21831/cole-brokamp/geocoder.svg)](https://zenodo.org/badge/latestdoi/21831/cole-brokamp/geocoder)
-[![](https://images.microbadger.com/badges/version/colebrokamp/geocoder.svg)](http://microbadger.com/images/colebrokamp/geocoder)
-[![](https://images.microbadger.com/badges/image/colebrokamp/geocoder.svg)](https://microbadger.com/images/colebrokamp/geocoder)
 
 # geocoder
 
@@ -10,7 +8,7 @@ See [geocoding.md](geocoding.md) for a description of how this service works and
 
 ## Installation and Usage with Docker
 
-As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. Pull the image with `docker pull colebrokamp/geocoder`.
+As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. Build the image with the enclosed Dockerfile: `docker build -t colebrokamp/geocoder .`
 
 The below is an example bash script used to run a batch geocoding job using the docker container:
 
