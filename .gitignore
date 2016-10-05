@@ -9,3 +9,4 @@ src/shp2sqlite/shp2sqlite
 src/liblwgeom/liblwgeom.a
 *.log
 geocoding.html
+.DS_Store
