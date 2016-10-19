@@ -49,4 +49,11 @@ RUN apt-get update && apt-get install -y apt-file \
 
 RUN gem install sqlite3 json Text
 
-RUN ln -s ~/geocoder/bin/geocode.R ~/geocode.R
+RUN mkdir /root/geocoder
+COPY . /root/geocoder
+
+RUN cd /root/geocoder \
+    && make install \
+    && gem install Geocoder-US-2.0.4.gem
+
+RUN ln -s /root/geocoder/bin/geocode.R ./geocode.R
