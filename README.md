@@ -1,4 +1,6 @@
-[![DOI](https://zenodo.org/badge/21831/cole-brokamp/geocoder.svg)](https://zenodo.org/badge/latestdoi/21831/cole-brokamp/geocoder)
+[![DOI](https://zenodo.org/badge/21831/cole-brokamp/geocoder.svg)](https://zenodo.org/badge/latestdoi/21831/The image is hosted privately and can be pulled with `docker pull 
+126952269818.dkr.ecr.us-east-1.amazonaws.com/geocoder`.
+This requires authorization through the amazon web services command line tools for the EC2 container registry service. Contact the author for access.cole-brokamp/geocoder)
 
 # geocoder
 
@@ -8,8 +10,9 @@ See [geocoding.md](geocoding.md) for a description of how this service works and
 
 ## Installation and Usage with Docker
 
-As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. Build the image with the enclosed Dockerfile: `docker build -t colebrokamp/geocoder .` Note that this build requires files from this repo to be available, so make sure to build from the repo folder. Or pull the 
-image with `docker pull colebrokamp/geocoder`; make sure to login with `docker login` first because the image is private.
+As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. Build the image with the enclosed Dockerfile: `docker build -t geocoder .` Note that this build 
+requires files from this repo to be available, so make sure to build from the repo folder. The image is hosted privately and can be pulled with `docker pull 126952269818.dkr.ecr.us-east-1.amazonaws.com/geocoder`. 
+This requires authorization through the amazon web services command line tools for the EC2 container registry service. Contact the author for access.
 
 The below is an example bash script used to run a batch geocoding job using the docker container:
 
@@ -21,7 +24,7 @@ The below is an example bash script used to run a batch geocoding job using the 
 ## second argument is column name of pasted address string
 
 # run docker image and job (map volumes and delete container when complete)
-docker run --name=geocoder--rm=true --volume=$PWD:/tmp colebrokamp/geocoder bash -c "./geocode.R /tmp/$1 $2"
+docker run --name=geocoder--rm=true --volume=$PWD:/tmp 126952269818.dkr.ecr.us-east-1.amazonaws.com/geocoder bash -c "./geocode.R /tmp/$1 $2"
 
 ```
 
