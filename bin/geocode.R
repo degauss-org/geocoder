@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
 
-# requires the geocoder sql/ruby package 
+# requires the geocoder sql/ruby package
 # requires Rscript and R
 # requires CB package
 
@@ -26,12 +26,15 @@ geocoded <- CB::cb_apply(addresses.unique,function(x) {
 	    out <- as.data.frame(out)[1, ]
 	    },error=function(e)data.frame('lat'=NA,'lon'=NA))
 	},fill=TRUE,pb=TRUE,parallel=TRUE)
-	
+
 save(geocoded,file='geocoded.RData')
 
 geocoded$address_call <- addresses.unique
 
 out.file <- merge(addresses,geocoded,by.x=address.col.name,by.y='address_call',all=TRUE)
+
+# delete the error-prone FIPS county column
+out.file$fips_county <- NULL
 
 out.file.name <- paste0(gsub('.csv','',in.file,fixed=TRUE),'_geocoded.csv')
 write.csv(out.file,out.file.name,row.names=F)
@@ -41,5 +44,3 @@ print(paste0('FINISHED! output written to ',out.file.name))
 # system(paste0('csv_to_shp ',out.file.name))
 
 # print(paste0('FINISHED! output written to ',out.file.name,'and to folder ',paste0(gsub('.csv','',out.file.name,fixed=TRUE)),' as a shapefile'))
-
-
