@@ -11,7 +11,6 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     libssh2-1-dev \
     libcurl4-openssl-dev \
-    curl \
     libxml2-dev \
     git \
     make \
@@ -34,8 +33,8 @@ RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sour
 
 RUN echo 'options(repos=c(CRAN = "https://cran.rstudio.com/"), download.file.method="wget")' >> /etc/R/Rprofile.site
 
-RUN sudo su - -c "R -e \"install.packages(c('devtools','argparser'))\"" \
-  && sudo su - -c "R -e \"devtools::install_github('cole-brokamp/CB')\""
+RUN sudo su - -c "R -e \"install.packages(c('devtools','argparser'))\"" 
+RUN sudo su - -c "R -e \"devtools::install_github('cole-brokamp/CB')\""
 
 # need Ruby 3 for the gems
 RUN apt-get update && apt-get install -y apt-file \
