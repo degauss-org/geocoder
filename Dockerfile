@@ -55,6 +55,4 @@ RUN cd /root/geocoder \
     && make install \
     && gem install Geocoder-US-2.0.4.gem
 
-RUN ln -s /root/geocoder/bin/geocode.R ./geocode.R
-
-ENTRYPOINT ["/bin/bash", "-c", "./geocode.R /tmp/$1 $2"]
+ENTRYPOINT ["/root/geocoder/bin/geocode.R"]
