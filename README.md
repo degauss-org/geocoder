@@ -1,3 +1,5 @@
+[![](https://images.microbadger.com/badges/image/degauss/geocoder.svg)](https://microbadger.com/images/degauss/geocoder "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/degauss/geocoder.svg)](https://microbadger.com/images/degauss/geocoder "Get your own version badge on microbadger.com")
 [![DOI](https://zenodo.org/badge/21831/cole-brokamp/geocoder.svg)](https://zenodo.org/badge/latestdoi/21831)
 
 # geocoder
