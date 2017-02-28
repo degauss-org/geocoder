@@ -10,18 +10,13 @@ See [geocoding documentation](http://colebrokamp.com.s3-website-us-east-1.amazon
 
 As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. The image is hosted on Docker Hub and can be pulled with `docker pull degauss/geocoder`.
 
-Batch geocode a file using a Docker container with the following helper script:
+Batch geocode a file using a Docker container with:
 
 ```bash
-#!/bin/bash
-
-## helper script to initiate batch geocoding job with docker
-## first argument is name of file in the current working directory that is to be geocoded
-## second argument is column name of pasted address string
-
-# run docker image and job (map volumes and delete container when complete)
-docker run --name=geocoder --rm=true --volume=$PWD:/tmp colebrokamp/geocoder $1 $2
+docker run --rm=true -v "$PWD":/tmp degauss/geocoder <name-of-csv-file> <name-of-address-column>
 ```
+
+For more information on using Docker for geocoding and additional images useful for deriving community and environmental exposures, see [DeGAUSS](https://cole-brokamp.github.io/DeGAUSS/).
 
 ## Traditional Installation
 
