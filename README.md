@@ -4,14 +4,13 @@
 
 > A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.
 
-See [geocoding.md](geocoding.md) for a description of how this service works and advice for getting and using the best results.
+See [geocoding documentation](http://colebrokamp.com.s3-website-us-east-1.amazonaws.com/posts_geocoding_tips.html) for a description of how this service works and advice for getting and using the best results.
 
 ## Installation and Usage with Docker
 
-As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. Build the image with the enclosed Dockerfile: `docker build -t geocoder .` Note that this build 
-requires files from this repo to be available, so make sure to build from the repo folder. The image is hosted privately on Docker Hub and can be pulled with `docker pull colebrokamp/geocoder`. This requires authorization, contact the author for access.
+As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. The image is hosted on Docker Hub and can be pulled with `docker pull degauss/geocoder`.
 
-Batch geocode a file with the following helper script:
+Batch geocode a file using a Docker container with the following helper script:
 
 ```bash
 #!/bin/bash
