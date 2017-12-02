@@ -6,7 +6,7 @@
 
 > A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.
 
-See [geocoding documentation](http://colebrokamp.com.s3-website-us-east-1.amazonaws.com/posts_geocoding_tips.html) for a description of how this service works and advice for getting and using the best results.
+See [geocoding documentation](http://colebrokamp.com/posts/geocoding_tips.html) for a description of how this service works and advice for getting and using the best results.
 
 ## Installation and Usage with Docker
 
