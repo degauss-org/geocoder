@@ -15,7 +15,7 @@ As an alternative to the usual installation, geocoding using a docker image usag
 Batch geocode a file using a Docker container with:
 
 ```bash
-docker run --rm=true -v "$PWD":/tmp degauss/geocoder <name-of-csv-file> <name-of-address-column>
+docker run --rm=true -v "$PWD":/tmp degauss/geocoder <name-of-csv-file> <name-of-address-column> <name-of-id-column> 
 ```
 
 For more information on using Docker for geocoding and additional images useful for deriving community and environmental exposures, see [DeGAUSS](https://cole-brokamp.github.io/DeGAUSS/).
@@ -95,13 +95,15 @@ Don't forget to `chmod` this file and optionally, symmlink it somewhere (`ln -s 
 your path.  Run the program without any arguments for help:
 
 	  > ./geocode.R
-	usage: ./geocode.R [--] [--help] file_name column_name
+	usage: ./geocode.R [--] [--help] file_name column_name id_name
 
 	offline geocoding, returns the input file with geocodes appended
 
 	positional arguments:
 	  file_name			name of input csv file
 	  column_name			the name of the column in the csv file that contains the address strings
+	  id_name			the name of the column in the csv file that contains the identifier
+
 
 	flags:
 	  -h, --help			show this help message and exit
@@ -109,7 +111,7 @@ your path.  Run the program without any arguments for help:
 
 Test the the program out on some sample addresses that are included in the git repo:
 
-	bin/geocode.R test_addresses.csv address
+	bin/geocode.R test_addresses.csv address id
 
 
 The program will output a progress bar to the terminal.  The output will be merged to the original input file and written as a CSV file with `_geocoded` appended to the end of the file name. Address fields not used for an address string will be `NA`.
