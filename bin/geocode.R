@@ -16,12 +16,12 @@ addresses <- read.csv(in.file,stringsAsFactors=FALSE,colClasses='character')
 
 addresses.unique <- unique(addresses[ ,address.col.name])
 
-geocoded <- CB::cb_apply(addresses.unique,function(x) {
+geocoded <- suppressMessages(CB::cb_apply(addresses.unique,function(x) {
         tf <- tempfile()
 	    system(paste0('ruby /root/geocoder/bin/geocode.rb "',x,'"',' "',tf,'"'))
 	    out <- jsonlite::fromJSON(tf)
 	    out <- as.data.frame(out)[1, ]},
-	fill=TRUE,pb=TRUE,parallel=TRUE,cache=TRUE,error.na=TRUE,.id=NULL)
+	fill=TRUE,pb=TRUE,parallel=TRUE,cache=TRUE,error.na=TRUE,.id=NULL))
 
 geocoded$address_call <- addresses.unique
 
