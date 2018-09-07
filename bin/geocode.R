@@ -16,7 +16,7 @@ addresses <- read.csv(in.file,stringsAsFactors=FALSE,colClasses='character')
 
 addresses.unique <- unique(addresses[ ,address.col.name])
 
-geocoded <- suppressMessages(CB::cb_apply(addresses.unique,function(x) {
+geocoded <- suppressWarnings(CB::cb_apply(addresses.unique,function(x) {
         tf <- tempfile()
 	    system(paste0('ruby /root/geocoder/bin/geocode.rb "',x,'"',' "',tf,'"'))
 	    out <- jsonlite::fromJSON(tf)
