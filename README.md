@@ -145,7 +145,7 @@ After making the database, it is safe to remove all of the TIGER files
 
 Create ruby metaphones
 
-	bin/rebuild_metaphones /opt/geocoder.db
+	build/rebuild_metaphones /opt/geocoder.db
 
 Construct database indexes
 
@@ -154,7 +154,6 @@ Construct database indexes
 
 Cluster the database accorindg to indexes, making lookups faster
 
-	chmod +x build/rebuild_cluster
 	build/rebuild_cluster /opt/geocoder.db
 
 ## Installation on CentOS 7
