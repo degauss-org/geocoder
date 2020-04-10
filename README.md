@@ -18,7 +18,7 @@ Batch geocode a file using a Docker container with:
 docker run --rm=true -v "$PWD":/tmp degauss/geocoder <name-of-csv-file> <name-of-address-column>
 ```
 
-For more information on using Docker for geocoding and additional images useful for deriving community and environmental exposures, see [DeGAUSS](https://cole-brokamp.github.io/DeGAUSS/).
+For more information on using Docker for geocoding and additional images useful for deriving community and environmental exposures, see [DeGAUSS](https://degauss.org).
 
 ## Traditional Installation
 
@@ -65,13 +65,11 @@ Download the git repo to the home directory and then compile the SQLite3 extensi
 
 ### TIGER/Line Database
 
-The program relies on a sqlite3 database created from TIGER/Line files that is about 4.6 GB. Download the compiled database based on 2015 TIGER/Line files into the `/opt` directory so it is accessible by all users.
+The program relies on a sqlite3 database created from TIGER/Line files that is about 4.6 GB. Download the compiled database based on 2019 TIGER/Line files into the `/opt` directory so it is accessible by all users.
 
-	sudo wget https://colebrokamp-dropbox.s3.amazonaws.com/geocoder.db -P /opt
-
+	wget https://geomarker.s3.amazonaws.com/geocoder.db -P /opt
 
 Alternatively, build your own database (see the section below for details).
-
 
 ## Usage
 
@@ -117,39 +115,47 @@ The program will output a progress bar to the terminal.  The output will be merg
 
 ## Building TIGER/Line Database
 
-Although a compiled database created from 2015 TIGER/Line files is available for download, it is possible to create your own database using alternative years for example.
+Although a compiled database created from 2019 TIGER/Line files is available for download, it is possible to create your own database using alternative years for example. Here are instructions for doing so using ubuntu 14.04 (ideally, docker.io/ubuntu:14.04).
+
+#### Install required software (in addition to requirements above to run the geocoder)
+	apt-get install wget make git unzip
+	
+#### Clone and install
+	git clone https://github.com/degauss-org/geomarker /geomarker
+	cd /geocoder
+	make install
+	gem install Geocoder-US-2.0.4.gem
 
 #### Download TIGER/Line files
 
-	mkdir TIGER2015 && cd TIGER2015
-	wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/ADDR/
-	wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/FEATNAMES/
-	wget -nd -r -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2015/EDGES/
-
-If the download fails, rerun with `-c` option to continue where it left off.
+	mkdir TIGER2019 && cd TIGER2019
+	wget -nd -r -c -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2019/ADDR/
+	wget -nd -r -c -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2019/FEATNAMES/
+	wget -nd -r -c -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2019/EDGES/
 
 #### Unpack each TIGER/Line ZIP into a temp directory and extract/transform/load to build database
-	sudo build/tiger_import /opt/geocoder.db TIGER2015
+
+	build/tiger_import /opt/geocoder.db /TIGER2019
 
 After making the database, it is safe to remove all of the TIGER files
 
-	rm -r TIGER2015
+	rm -r /TIGER2019
 
 #### Update database
 
 Create ruby metaphones
 
-	sudo bin/rebuild_metaphones /opt/geocoder.db
+	bin/rebuild_metaphones /opt/geocoder.db
 
 Construct database indexes
 
-	sudo chmod +x build/build_indexes
-	sudo build/build_indexes /opt/geocoder.db
+	chmod +x build/build_indexes
+	build/build_indexes /opt/geocoder.db
 
 Cluster the database accorindg to indexes, making lookups faster
 
-	sudo chmod +x build/rebuild_cluster
-	sudo build/rebuild_cluster /opt/geocoder.db
+	chmod +x build/rebuild_cluster
+	build/rebuild_cluster /opt/geocoder.db
 
 ## Installation on CentOS 7
 
