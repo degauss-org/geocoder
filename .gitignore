@@ -10,3 +10,6 @@ src/liblwgeom/liblwgeom.a
 *.log
 geocoding.html
 .DS_Store
+geocoder.db
+geocoder_2019.db
+test/cache
