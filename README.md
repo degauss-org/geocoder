@@ -65,11 +65,9 @@ Download the git repo to the home directory and then compile the SQLite3 extensi
 
 ### TIGER/Line Database
 
-The program relies on a sqlite3 database created from TIGER/Line files that is about 4.6 GB. Download the compiled database based on 2019 TIGER/Line files into the `/opt` directory so it is accessible by all users.
+The program relies on a sqlite3 database created from TIGER/Line files that is about 4.3 GB. Download the compiled database based on 2019 TIGER/Line files as `/opt/geocoder.db` directory so it is accessible by all users.
 
-	wget https://geomarker.s3.amazonaws.com/geocoder.db -P /opt
-
-Alternatively, build your own database (see the section below for details).
+This file is stored at `s3://geomarker/geocoder_2019.db`. Alternatively, build your own database (see the section below for details).
 
 ## Usage
 

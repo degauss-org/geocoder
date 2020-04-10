@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN wget https://colebrokamp-dropbox.s3.amazonaws.com/geocoder.db -P /opt
+COPY geocoder_2019.db /opt/geocoder.db
 
 RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list \
   && apt-get update \
