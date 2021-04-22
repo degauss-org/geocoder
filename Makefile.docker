@@ -9,7 +9,7 @@ build:
 	docker build -t $(IMAGE) .
 
 test:
-	docker run --rm -v "${PWD}/test":/tmp $(IMAGE) my_address_file.csv address
+	docker run --rm -v "${PWD}/test":/tmp $(IMAGE) my_address_file.csv
 
 shell:
 	docker run --rm -it --entrypoint=/bin/bash -v "${PWD}/test":/tmp $(IMAGE)
