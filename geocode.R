@@ -1,6 +1,4 @@
-#!/usr/bin/Rscript
-
-######## to become dht functions
+#!/usr/local/bin/Rscript
 
 clean_address <- function(address) {
   cli::cli_alert_info('removing non-alphanumeric characters...\n')
@@ -56,18 +54,15 @@ address_is_nonaddress <- function(address) {
   return(non_address_text)
 }
 
-
-############
-
 setwd('/tmp')
 
 dht::qlibrary(argparser)
 dht::qlibrary(dplyr)
-p <- arg_parser('offline geocoding, returns the input file with geocodes appended')
-p <- add_argument(p,'file_name',help='name of input csv file')
-p <- add_argument(p, '--score_threshold', default = 0.5, help = 'optional; defaults to 0.5')
+p <- argparser::arg_parser('offline geocoding, returns the input file with geocodes appended')
+p <- argparser::add_argument(p,'file_name',help='name of input csv file')
+p <- argparser::add_argument(p, '--score_threshold', default = 0.5, help = 'optional; defaults to 0.5')
 
-args <- parse_args(p)
+args <- argparser::parse_args(p)
 
 d <- readr::read_csv(args$file_name)
 # d <- read.csv('test/my_address_file.csv', stringsAsFactors = FALSE)
