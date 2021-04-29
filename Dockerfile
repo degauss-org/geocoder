@@ -50,4 +50,4 @@ RUN R --quiet -e "renv::restore(repos = c(CRAN = 'https://packagemanager.rstudio
 COPY geocode.R .
 COPY geocode.rb .
 
-ENTRYPOINT ["geocode.R"]
+ENTRYPOINT ["./geocode.R"]
