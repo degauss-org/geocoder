@@ -1,4 +1,4 @@
-#!/usr/local/bin/Rscript
+#!/usr/bin/Rscript
 
 clean_address <- function(address) {
   cli::cli_alert_info('removing non-alphanumeric characters...\n')
