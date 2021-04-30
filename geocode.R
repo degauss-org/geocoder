@@ -54,6 +54,7 @@ address_is_nonaddress <- function(address) {
   return(non_address_text)
 }
 
+#################
 setwd('/tmp')
 
 dht::qlibrary(argparser)
@@ -65,20 +66,22 @@ p <- argparser::add_argument(p, '--score_threshold', default = 0.5, help = 'opti
 args <- argparser::parse_args(p)
 
 d <- readr::read_csv(args$file_name)
-# d <- readr::read_csv('test/my_address_file.csv')
 # d <- readr::read_csv('my_address_file.csv')
-# d <- d[1:5,]
 
-# must contain character column called address
+## must contain character column called address
 if (! 'address' %in% names(d)) stop('no column called address found in the input file', call. = FALSE)
+
+## clean up addresses / classify 'bad' addresses
 d$address <- clean_address(d$address)
 d$po_box <- address_is_po_box(d$address)
 d$cincy_inst_foster_addr <- address_is_institutional(d$address)
 d$non_address_text <- address_is_nonaddress(d$address)
 
+## exclude 'bad' addresses from geocoding
 d_excluded_for_address <- dplyr::filter(d, cincy_inst_foster_addr | po_box | non_address_text)
 d_for_geocoding <- dplyr::filter(d, !cincy_inst_foster_addr & !po_box & !non_address_text)
 
+## geocode
 cli::cli_alert_info('now geocoding ... \n')
 geocode <- function(addr_string) {
   stopifnot(class(addr_string)=='character')
@@ -98,28 +101,27 @@ d_for_geocoding$geocodes <- mappp::mappp(d_for_geocoding$address,
                                       cache = TRUE,
                                       cache.name = 'geocoding_cache')
 
-# message('geocoding complete; now filtering to precise geocodes', '...\n')
-# !!!!!! extract results, if a tie then take first returned result
+## extract results, if a tie then take first returned result
 d_for_geocoding <- d_for_geocoding %>%
-  dplyr::mutate(geocodes = purrr::map(geocodes, ~ .x %>% purrr::map(unlist) %>% as_tibble())) %>%
+  dplyr::mutate(row_index = 1:nrow(d_for_geocoding),
+                geocodes = purrr::map(geocodes, ~ .x %>% purrr::map(unlist) %>% as_tibble())) %>%
   tidyr::unnest(cols = c(geocodes)) %>%
+  dplyr::group_by(row_index) %>%
+  dplyr::slice(1) %>%
+  dplyr::ungroup() %>%
   dplyr::rename(matched_street = street,
                 matched_city = city,
                 matched_state = state,
                 matched_zip = zip) %>%
-  dplyr::select(-fips_county, -prenum, -number) %>%
+  dplyr::select(-fips_county, -prenum, -number, -row_index) %>%
   dplyr::mutate(precision = factor(precision,
                             levels = c('range', 'street', 'intersection', 'zip', 'city'),
                             ordered = TRUE)) %>%
   dplyr::arrange(desc(precision), score)
 
-out_file <- dplyr::bind_rows(d_excluded_for_address, d_for_geocoding)
-
-# out_file <- readr::read_csv('test/my_address_file_geocoded.csv')
-# args <- list()
-# args$score_threshold <- 0.5
-
-out_file <- out_file %>%
+## clean up 'bad' address columns / filter to precise geocodes
+cli::cli_alert_info('geocoding complete; now filtering to precise geocodes...\n')
+out_file <- dplyr::bind_rows(d_excluded_for_address, d_for_geocoding) %>%
   dplyr::mutate(geocode_result = dplyr::case_when(
     po_box ~ "po_box",
     cincy_inst_foster_addr ~ "cincy_inst_foster_addr",
@@ -129,9 +131,9 @@ out_file <- out_file %>%
     lat = ifelse(geocode_result == 'imprecise_geocode', NA, lat),
     lon = ifelse(geocode_result == 'imprecise_geocode', NA, lon)
   ) %>%
-  select(-po_box, -cincy_inst_foster_addr, -non_address_text)
-# note, just "PO" not "PO BOX" is not flagged as "po_box"
+  select(-po_box, -cincy_inst_foster_addr, -non_address_text) # note, just "PO" not "PO BOX" is not flagged as "po_box"
 
+## summarize geocoding results
 geocode_summary <- out_file %>%
   mutate(geocode_result = factor(geocode_result,
                                  levels = c('po_box', 'cincy_inst_foster_addr', 'non_address_text',
@@ -142,11 +144,12 @@ geocode_summary <- out_file %>%
   rename(n_address = n) %>%
   mutate(`%` = round(n_address/sum(n_address)*100,1))
 
+## write out file
 out.file.name <- paste0(gsub('.csv', '', args$file_name, fixed=TRUE),'_geocoded_v3.0.csv')
-# out.file.name <- paste0(gsub('.csv','',"tmp/my_address_file.csv",fixed=TRUE),'_geocoded.csv')
 readr::write_csv(out_file, out.file.name)
-
 cli::cli_alert_success('FINISHED! output written to {out.file.name}')
+
+## print geocoding results summary to console
 n_geocoded <- geocode_summary$n_address[geocode_summary$geocode_result == 'geocoded']
 n_total <- sum(geocode_summary$n_address)
 pct_geocoded <- geocode_summary$`%`[geocode_summary$geocode_result == 'geocoded']
