@@ -1,196 +1,84 @@
-[![](https://images.microbadger.com/badges/image/degauss/geocoder.svg)](https://microbadger.com/images/degauss/geocoder "Get your own image badge on microbadger.com")
-[![](https://images.microbadger.com/badges/version/degauss/geocoder.svg)](https://microbadger.com/images/degauss/geocoder "Get your own version badge on microbadger.com")
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.344621.svg)](https://doi.org/10.5281/zenodo.344621)
-
-# geocoder
+# geocoder <a href='https://degauss-org.github.io/DeGAUSS/'><img src='https://github.com/degauss-org/degauss_template/blob/master/DeGAUSS_hex.png' align='right' height='138.5' /></a>
 
 > A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.
 
-See [geocoding documentation](http://colebrokamp.com/posts/geocoding_tips.html) for a description of how this service works and advice for getting and using the best results.
+[![Docker Build Status](https://img.shields.io/docker/automated/degauss/geocoder)](https://hub.docker.com/repository/docker/degauss/geocoder/tags)
+[![GitHub Latest Tag](https://img.shields.io/github/v/tag/degauss-org/geocoder)](https://github.com/degauss-org/geocoder/releases)
 
-## Installation and Usage with Docker
+## version 3.0
 
-As an alternative to the usual installation, geocoding using a docker image usage may be easier to install and use. The image is hosted on Docker Hub and can be pulled with `docker pull degauss/geocoder`.
+The DeGAUSS geocoder has been updated to use **2019 TIGER/Line files** and includes the following features:
 
-Batch geocode a file using a Docker container with:
+- performs some cleaning of address text (i.e., removes excess whitespace and non-alphanumerics)
+- returns matched address components
+- returns geocoding diagnostics and a summary printed to the console
+- imprecise geocodes are filtered out of the output file
+- output files names now include the version number
 
-```bash
-docker run --rm=true -v "$PWD":/tmp degauss/geocoder <name-of-csv-file> <name-of-address-column>
+## DeGAUSS example call
+
+If `my_address_file.csv` is a file in the current working directory with an address column named `address`, then
+
+```sh
+docker run --rm -v $PWD:/tmp degauss/geocoder:3.0 my_address_file.csv
 ```
 
-For more information on using Docker for geocoding and additional images useful for deriving community and environmental exposures, see [DeGAUSS](https://degauss.org).
+will produce `my_address_file_geocoded_v3.0.csv` with added columns including `lat`, `lon`, and geocoding diagnostic information.
 
-## Traditional Installation
+### Notes about input address data formatting
 
-This software was designed and tested on Linux Ubuntu. The following install instructions are for Ubuntu. CentOS install instructions are also below, but are not throughly tested.
+- Other columns may be present, but it is recommended to only include `address` and an optional identifier column (e.g., `id`). Fewer columns will increase geocoding speed.
 
-### Requirements
+- Address data must be in one column called `address`. 
 
-Install required software:
+- Separate the different address components with a space
 
-	sudo apt-get install sqlite3 libsqlite3-dev flex ruby-full ruby-rubyforge libssl-dev libssh2-1-dev libcurl4-openssl-dev curl libxml2-dev
+- Do not include apartment numbers or "second address line" (but its okay if you can't remove them)
 
-Install ruby gems:
+- ZIP codes must be five digits (i.e. `32709`) and not "plus four" (i.e. `32709-0000`)
 
-	sudo gem install sqlite3
-	sudo gem install json
-	sudo gem install Text
+- Do not try to geocode addresses without a valid 5 digit zip code; this is used by the geocoder to complete its initial searches and if attempted, it will likely return incorrect matches
 
-Install R:
+- Spelling should be as accurate as possible, but the program does complete "fuzzy matching" so an exact match is not necessary
+- Capitalization does not affect results
 
-	sudo sh -c 'echo "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list'
-	sudo apt-get update
-	sudo apt-get install r-base-core
+- Abbreviations may be used (i.e. `St.` instead of `Street` or `OH` instead of `Ohio`)
 
-    sudo sh -c 'echo "deb http://mirrors.ocf.berkeley.edu/ubuntu/ trusty-backports main restricted universe" >> /etc/apt/sources.list'
-	sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
-	sudo apt-get update
-	sudo apt-get install r-base-dev
+- Use arabic numerals instead of written numbers (i.e. `13` instead of `thirteen`)
 
-Install R packages:
+- Address strings with out of order items could return NA (i.e. `3333 Burnet Ave Cincinnati 45229 OH`)
 
-	sudo su - -c "R -e \"install.packages('devtools', repos='https://cran.rstudio.com/')\""
-	sudo su - -c "R -e \"devtools::install_github('cole-brokamp/CB')\""
-	sudo su - -c "R -e \"install.packages('argparser', repos='https://cran.rstudio.com/')\""
+## Interpreting geocoding results
 
-### Download and Install
+Geocoder output includes the following columns: 
 
-Download the git repo to the home directory and then compile the SQLite3 extension and the Geocoder-US Ruby gem:
+- `matched_street`, `matched_city`, `matched_state`, `matched_zip`: matched address componets (e.g., `matched_street` is the street the geocoder matched with the input address); can be used to investigate input address misspellings, typos, etc.
 
-    cd ~
-	git clone https://github.com/cole-brokamp/geocoder
-    cd geocoder
-    sudo make install
-    sudo gem install Geocoder-US-2.0.4.gem
+- `lat` and `lon`: geocoded coordinates for matched address
 
-### TIGER/Line Database
+- `score`: The percentage of text match between the given address and the geocoded result, expressed as a number between 0 and 1. A higher score indicates a closer match. Note that each score is relative within a precision method (i.e. a `score` of `0.8` with a `precision` of `range `is not the same as a `score` of `0.8` with a `precision` of `street`). By default, missing geocodes are returned if the `score` is less than `0.5`. This threshold be changed by including an optional argument in the docker call (`docker run --rm -v $PWD:/tmp degauss/geocoder:3.0 my_address_file.csv 0.4`).
 
-The program relies on a sqlite3 database created from TIGER/Line files that is about 4.3 GB. Download the compiled database based on 2019 TIGER/Line files as `/opt/geocoder.db` directory so it is accessible by all users.
+- `precision`: The qualitative precision of the geocode. The value will be one of:
 
-This file is stored at `s3://geomarker/geocoder_2019.db`. Alternatively, build your own database (see the section below for details).
+      + `range`: interpolated based on address ranges from street segments
+      + `street`:  center of the matched street
+      + `intersection`: intersection of two streets
+      + `zip`: centroid of the matched zip code
+      + `city`: centroid of the matched city
+      
+    Because they are likely too inaccurate or too imprecise to be used for further analysis, missing geocodes are returned if the precision is `intersection`, `zip`, or `city`.
+    
+- `geocode_result`: A qualitative summary of the geocoding result. The value will be one of
 
-## Usage
+      + `po_box`: the address was not geocoded because it is a PO Box
+      + `cincy_inst_foster_addr`: the address was not geocoded because it is a known institutional address, not a residential address
+      + `non_address_text`: the address was not geocoded because it was blank or listed as "foreign", "verify", or "unknown" 
+      + `imprecise_geocode`: the address was geocoded, but results were suppressed because the `precision` was `intersection`, `zip`, or `city` and/or the `score` was less than `0.5`.
+      + `geocoded`: the address was geocoded with a `precision` of either `range` or `street` and a `score` of `0.5` or greater.
 
-#### Geocoding
+## DeGAUSS details
 
-The program takes in one character string and parses address components in order to search the database.  To geocode an address, call ruby to run the program with the address string as the argument:
+For detailed documentation on DeGAUSS, including general usage and installation, please see the [DeGAUSS homepage](https://degauss.org). 
 
-	ruby ~/geocoder/bin/geocode.rb "3333 Burnet Ave Cincinnati Ohio 45229"
-
-This results in a file called `temp.json` being written to the current directory with the results. It is possible to pipe this output into another file, but the user will likely be geocoding more than one file at a time, using batch geocoding.
-
-The `geocode.R` program uses the `argparser` package to take in command line arguments which define both the name of the CSV file and name of the column in that file which contain the address strings.
-
-#### Submission for Batch Geocoding
-
-For batch geocoding, run `geocoder/bin/geocode.R`, which relies on `Rscript` to run the R program from the command line with arguments.  The R program serves as a wrapper to read the file, iterate over the address strings, output a progress bar, and write the results file as a CSV.
-
-The first argument defines the name of the CSV file and the second argument defines the name of the column in that file which contains the address strings.
-
-Don't forget to `chmod` this file and optionally, symmlink it somewhere (`ln -s ~/geocoder/bin/geocode.R ~/geocode.R`) or add it to
-your path.  Run the program without any arguments for help:
-
-	  > ./geocode.R
-	usage: ./geocode.R [--] [--help] file_name column_name
-
-	offline geocoding, returns the input file with geocodes appended
-
-	positional arguments:
-	  file_name			name of input csv file
-	  column_name			the name of the column in the csv file that contains the address strings
-
-	flags:
-	  -h, --help			show this help message and exit
-
-
-Test the the program out on some sample addresses that are included in the git repo:
-
-	bin/geocode.R test_addresses.csv address
-
-
-The program will output a progress bar to the terminal.  The output will be merged to the original input file and written as a CSV file with `_geocoded` appended to the end of the file name. Address fields not used for an address string will be `NA`.
-
-
-## Building TIGER/Line Database
-
-Although a compiled database created from 2019 TIGER/Line files is available for download, it is possible to create your own database using alternative years for example. Here are instructions for doing so using ubuntu 14.04 (ideally, docker.io/ubuntu:14.04).
-
-#### Install required software (in addition to requirements above to run the geocoder)
-	apt-get install wget make git unzip
-	
-#### Clone and install
-	git clone https://github.com/degauss-org/geomarker /geomarker
-	cd /geocoder
-	make install
-	gem install Geocoder-US-2.0.4.gem
-
-#### Download TIGER/Line files
-
-	mkdir TIGER2019 && cd TIGER2019
-	wget -nd -r -c -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2019/ADDR/
-	wget -nd -r -c -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2019/FEATNAMES/
-	wget -nd -r -c -A.zip ftp://ftp2.census.gov/geo/tiger/TIGER2019/EDGES/
-
-#### Unpack each TIGER/Line ZIP into a temp directory and extract/transform/load to build database
-
-	build/tiger_import /opt/geocoder.db /TIGER2019
-
-After making the database, it is safe to remove all of the TIGER files
-
-	rm -r /TIGER2019
-
-#### Update database
-
-Create ruby metaphones
-
-	build/rebuild_metaphones /opt/geocoder.db
-
-Construct database indexes
-
-	chmod +x build/build_indexes
-	build/build_indexes /opt/geocoder.db
-
-Cluster the database accorindg to indexes, making lookups faster
-
-	build/rebuild_cluster /opt/geocoder.db
-
-## Installation on CentOS 7
-
-Before installation (all takes place under sudo)
-
-  	sudo su -
-
-Install software dependencies:
-
-  	yum install -y sqlite sqlite-devel.x86_64 flex ruby git-core zlib zlib-devel gcc-c++ patch readline readline-devel libyaml-devel libffi-devel openssl-devel make bzip2 autoconf automake libtool bison curl sqlite-devel libcurl-devel libxml2-devel.x86_64 ruby-rdoc ruby-devel
-
-Install Ruby gems:
-
-  	gem install sqlite3 json Text
-
-Install R:
-
-  	rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    yum update
-    yum install R
-
-Open R:
-
-  	R --vanilla
-
-Within R, install packages:
-
-```r
-install.packages(c('devtools','argparser'),repos='https://cran.rstudio.com')
-devtools::install_github('cole-brokamp/CB')
-```
-
-Download the git repo to the home directory and then compile the SQLite3 extension and the Geocoder-US Ruby gem:
-
-    cd ~
-    git clone https://github.com/cole-brokamp/geocoder
-    cd geocoder
-    sudo make install
-    sudo gem install Geocoder-US-2.0.4.gem
-
-Make sure to install the database as described above.
+- [Docker installation instructions](https://github.com/degauss-org/degauss-org.github.io/wiki/Installing-Docker)
+- [Manual geocoder installation instructions](https://github.com/degauss-org/degauss-org.github.io/wiki/Geocoder-Manual-Installation)
