@@ -25,27 +25,18 @@ docker run --rm -v $PWD:/tmp degauss/geocoder:3.0 my_address_file.csv
 
 will produce `my_address_file_geocoded_v3.0.csv` with added columns including `lat`, `lon`, and geocoding diagnostic information.
 
-### Notes about input address data formatting
+### Input address data formatting
 
 - Other columns may be present, but it is recommended to only include `address` and an optional identifier column (e.g., `id`). Fewer columns will increase geocoding speed.
-
 - Address data must be in one column called `address`. 
-
 - Separate the different address components with a space
-
 - Do not include apartment numbers or "second address line" (but its okay if you can't remove them)
-
 - ZIP codes must be five digits (i.e. `32709`) and not "plus four" (i.e. `32709-0000`)
-
 - Do not try to geocode addresses without a valid 5 digit zip code; this is used by the geocoder to complete its initial searches and if attempted, it will likely return incorrect matches
-
 - Spelling should be as accurate as possible, but the program does complete "fuzzy matching" so an exact match is not necessary
 - Capitalization does not affect results
-
 - Abbreviations may be used (i.e. `St.` instead of `Street` or `OH` instead of `Ohio`)
-
 - Use arabic numerals instead of written numbers (i.e. `13` instead of `thirteen`)
-
 - Address strings with out of order items could return NA (i.e. `3333 Burnet Ave Cincinnati 45229 OH`)
 
 ## Interpreting geocoding results
@@ -60,21 +51,28 @@ Geocoder output includes the following columns:
 
 - `precision`: The qualitative precision of the geocode. The value will be one of:
 
-      + `range`: interpolated based on address ranges from street segments
-      + `street`:  center of the matched street
-      + `intersection`: intersection of two streets
-      + `zip`: centroid of the matched zip code
-      + `city`: centroid of the matched city
+    * `range`: interpolated based on address ranges from street segments
+
+    * `street`:  center of the matched street
+
+    * `intersection`: intersection of two streets
+
+    * `zip`: centroid of the matched zip code
+
+    * `city`: centroid of the matched city
       
-    Because they are likely too inaccurate or too imprecise to be used for further analysis, missing geocodes are returned if the precision is `intersection`, `zip`, or `city`.
+Because they are likely too inaccurate or too imprecise to be used for further analysis, missing geocodes are returned if the precision is `intersection`, `zip`, or `city`.
     
 - `geocode_result`: A qualitative summary of the geocoding result. The value will be one of
 
-      + `po_box`: the address was not geocoded because it is a PO Box
-      + `cincy_inst_foster_addr`: the address was not geocoded because it is a known institutional address, not a residential address
-      + `non_address_text`: the address was not geocoded because it was blank or listed as "foreign", "verify", or "unknown" 
-      + `imprecise_geocode`: the address was geocoded, but results were suppressed because the `precision` was `intersection`, `zip`, or `city` and/or the `score` was less than `0.5`.
-      + `geocoded`: the address was geocoded with a `precision` of either `range` or `street` and a `score` of `0.5` or greater.
+    * `po_box`: the address was not geocoded because it is a PO Box
+    * `cincy_inst_foster_addr`: the address was not geocoded because it is a known institutional address, not a residential address
+      
+    * `non_address_text`: the address was not geocoded because it was blank or listed as "foreign", "verify", or "unknown" 
+      
+    * `imprecise_geocode`: the address was geocoded, but results were suppressed because the `precision` was `intersection`, `zip`, or `city` and/or the `score` was less than `0.5`.
+      
+    * `geocoded`: the address was geocoded with a `precision` of either `range` or `street` and a `score` of `0.5` or greater.
 
 ## DeGAUSS details
 
