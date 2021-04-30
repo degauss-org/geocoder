@@ -1,60 +1,5 @@
 #!/usr/bin/Rscript
 
-clean_address <- function(address) {
-  cli::cli_alert_info('removing non-alphanumeric characters...\n')
-  address <- stringr::str_replace_all(address, stringr::fixed('\\'), '')
-  address <- stringr::str_replace_all(address, stringr::fixed('"'), '')
-  address <- stringr::str_replace_all(address, "[^a-zA-Z0-9-]"," ")
-
-  cli::cli_alert_info('removing excess whitespace...\n')
-  address <- stringr::str_squish(address)
-  return(address)
-}
-
-address_is_po_box <- function(address) {
-  cli::cli_alert_info('flagging PO boxes...\n')
-  po_regex_string <- c('\\bP(OST)*\\.*\\s*[O|0](FFICE)*\\.*\\sB[O|0]X')
-  po_box <- purrr::map(address, ~ stringr::str_detect(.x, stringr::regex(po_regex_string, ignore_case=TRUE)))
-  missing_address <- c(which(is.na(address)), which(d$address == ''))
-  po_box[missing_address] <- FALSE
-  return(purrr::map_lgl(po_box, any))
-}
-
-address_is_institutional <- function(address) {
-  cli::cli_alert_info('flagging known Cincinnati foster & institutional addresses...\n')
-  institutional_strings <- c('Ronald McDonald House',
-                           '350 Erkenbrecher Ave',
-                           '350 Erkenbrecher Avenue',
-                           '350 Erkenbrecher Av',
-                           '222 East Central Parkway',
-                           '222 East Central Pkwy',
-                           '222 East Central Pky',
-                           '222 Central Parkway',
-                           '222 Central Pkwy',
-                           '222 Central Pky',
-                           '3333 Burnet Ave',
-                           '3333 Burnet Avenue',
-                           '3333 Burnet Av')
-  inst_foster_addr <- purrr::map(address, ~ stringr::str_detect(.x, stringr::coll(institutional_strings, ignore_case=TRUE)))
-  missing_address <- c(which(is.na(address)), which(d$address == ''))
-  inst_foster_addr[missing_address] <- FALSE
-  return(purrr::map_lgl(inst_foster_addr, any))
-}
-
-address_is_nonaddress <- function(address) {
-  cli::cli_alert_info('flagging non-address text and missing addresses...\n')
-  non_address_strings <- c('verify',
-                           'foreign',
-                           'foreign country',
-                           'unknown')
-  non_address_text <- purrr::map(address, ~ stringr::str_detect(.x, stringr::coll(non_address_strings, ignore_case=TRUE)))
-  non_address_text <- purrr::map_lgl(non_address_text, any)
-  missing_address <- c(which(is.na(address)), which(d$address == ''))
-  non_address_text[missing_address] <- TRUE # might remove second part after removing blank spaces?
-  return(non_address_text)
-}
-
-#################
 setwd('/tmp')
 
 dht::qlibrary(argparser)
@@ -72,10 +17,10 @@ d <- readr::read_csv(args$file_name)
 if (! 'address' %in% names(d)) stop('no column called address found in the input file', call. = FALSE)
 
 ## clean up addresses / classify 'bad' addresses
-d$address <- clean_address(d$address)
-d$po_box <- address_is_po_box(d$address)
-d$cincy_inst_foster_addr <- address_is_institutional(d$address)
-d$non_address_text <- address_is_nonaddress(d$address)
+d$address <- dht::clean_address(d$address)
+d$po_box <- dht::address_is_po_box(d$address)
+d$cincy_inst_foster_addr <- dht::address_is_institutional(d$address)
+d$non_address_text <- dht::address_is_nonaddress(d$address)
 
 ## exclude 'bad' addresses from geocoding
 d_excluded_for_address <- dplyr::filter(d, cincy_inst_foster_addr | po_box | non_address_text)
