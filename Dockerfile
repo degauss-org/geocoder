@@ -1,7 +1,7 @@
 FROM ubuntu:20.04
 
-# ADD https://geomarker.s3.us-east-2.amazonaws.com/geocoder_2019.db /opt/geocoder.db
-COPY geocoder_2019.db /opt/geocoder.db
+ADD https://geomarker.s3.us-east-2.amazonaws.com/geocoder_2019.db /opt/geocoder.db
+# COPY geocoder_2019.db /opt/geocoder.db
 
 RUN apt-get update && apt-get install -y \
     libssl-dev \
@@ -24,13 +24,13 @@ RUN gem install sqlite3 json Text
 RUN mkdir /root/geocoder
 WORKDIR /root/geocoder
 
-COPY Makefile .
+COPY Makefile.ruby .
 COPY /src ./src
 COPY /lib ./lib
 COPY /gemspec ./gemspec
 
 RUN cd /root/geocoder \
-    && make install \
+    && make -f Makefile.ruby install \
     && gem install Geocoder-US-2.0.4.gem
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 \
