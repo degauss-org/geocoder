@@ -4,6 +4,9 @@ setwd('/tmp')
 
 dht::qlibrary(argparser)
 dht::qlibrary(dplyr)
+dht::qlibrary(digest)
+dht::qlibrary(knitr)
+# library(digest)
 p <- argparser::arg_parser('offline geocoding, returns the input file with geocodes appended')
 p <- argparser::add_argument(p,'file_name',help='name of input csv file')
 p <- argparser::add_argument(p, '--score_threshold', default = 0.5, help = 'optional; defaults to 0.5')
@@ -27,7 +30,7 @@ d_excluded_for_address <- dplyr::filter(d, cincy_inst_foster_addr | po_box | non
 d_for_geocoding <- dplyr::filter(d, !cincy_inst_foster_addr & !po_box & !non_address_text)
 
 ## geocode
-cli::cli_alert_info('now geocoding ... \n')
+cli::cli_alert_info('now geocoding ...', wrap = TRUE)
 geocode <- function(addr_string) {
   stopifnot(class(addr_string)=='character')
   out <- system2('ruby',
@@ -65,7 +68,7 @@ d_for_geocoding <- d_for_geocoding %>%
   dplyr::arrange(desc(precision), score)
 
 ## clean up 'bad' address columns / filter to precise geocodes
-cli::cli_alert_info('geocoding complete; now filtering to precise geocodes...\n')
+cli::cli_alert_info('geocoding complete; now filtering to precise geocodes...', wrap = TRUE)
 out_file <- dplyr::bind_rows(d_excluded_for_address, d_for_geocoding) %>%
   dplyr::mutate(geocode_result = dplyr::case_when(
     po_box ~ "po_box",
@@ -86,17 +89,18 @@ geocode_summary <- out_file %>%
                                  ordered = TRUE)) %>%
   group_by(geocode_result) %>%
   tally() %>%
-  rename(n_address = n) %>%
-  mutate(`%` = round(n_address/sum(n_address)*100,1))
+  mutate(`%` = round(n/sum(n)*100,1),
+         `n (%)` = glue::glue('{n} ({`%`})'))
 
 ## write out file
 out.file.name <- paste0(gsub('.csv', '', args$file_name, fixed=TRUE),'_geocoded_v3.0.csv')
 readr::write_csv(out_file, out.file.name)
-cli::cli_alert_success('FINISHED! output written to {out.file.name}')
+cli::cli_alert_success('FINISHED! output written to {out.file.name}', wrap = TRUE)
 
 ## print geocoding results summary to console
-n_geocoded <- geocode_summary$n_address[geocode_summary$geocode_result == 'geocoded']
-n_total <- sum(geocode_summary$n_address)
+n_geocoded <- geocode_summary$n[geocode_summary$geocode_result == 'geocoded']
+n_total <- sum(geocode_summary$n)
 pct_geocoded <- geocode_summary$`%`[geocode_summary$geocode_result == 'geocoded']
-cli::cli_alert_info('{n_geocoded} of {n_total} ({pct_geocoded}%) addresses were successfully geocoded. See detailed summary below.')
-print(geocode_summary)
+cli::cli_alert_info('{n_geocoded} of {n_total} ({pct_geocoded}%) addresses were successfully geocoded. See detailed summary below.',
+                    wrap = TRUE)
+knitr::kable(geocode_summary %>% dplyr::select(geocode_result, `n (%)`))
