@@ -1,5 +1,8 @@
 #!/usr/bin/Rscript
 
+dht::greeting(geomarker_name = 'geocoder', version = '3.0',
+              description = 'returns geocoded coordinates based on input address strings')
+
 setwd('/tmp')
 
 dht::qlibrary(argparser)
