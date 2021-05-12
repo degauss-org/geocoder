@@ -10,3 +10,12 @@ src/liblwgeom/liblwgeom.a
 *.log
 geocoding.html
 .DS_Store
+geocoder.db
+geocoder_2019.db
+test/cache
+.Rproj.user
+.Rhistory
+geocoder.Rproj
+test/d_for_geocoding.rds
+test/geocoding_cache/
+test/tmp*

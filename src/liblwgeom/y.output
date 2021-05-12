@@ -1,0 +1,2887 @@
+Grammar
+
+    0 $accept: geometry $end
+
+    1 $@1: %empty
+
+    2 geometry: srid SEMICOLON $@1 geometry_int
+
+    3 $@2: %empty
+
+    4 geometry: $@2 geometry_int
+
+    5 geometry_int: geom_wkb
+    6             | geom_point
+    7             | geom_linestring
+    8             | geom_circularstring
+    9             | geom_polygon
+   10             | geom_compoundcurve
+   11             | geom_curvepolygon
+   12             | geom_multipoint
+   13             | geom_multilinestring
+   14             | geom_multicurve
+   15             | geom_multipolygon
+   16             | geom_multisurface
+   17             | geom_geometrycollection
+
+   18 srid: SRID EQUALS VALUE
+
+   19 geom_wkb: WKB
+
+   20 geom_point: POINT point
+
+   21 $@3: %empty
+
+   22 geom_point: POINTM $@3 point
+
+   23 point: empty_point
+   24      | nonempty_point
+
+   25 $@4: %empty
+
+   26 empty_point: $@4 empty
+
+   27 $@5: %empty
+
+   28 nonempty_point: $@5 point_int
+
+   29 point_int: LPAREN a_point RPAREN
+
+   30 $@6: %empty
+
+   31 geom_multipoint: MULTIPOINT $@6 multipoint
+
+   32 $@7: %empty
+
+   33 geom_multipoint: MULTIPOINTM $@7 multipoint
+
+   34 multipoint: empty
+
+   35 $@8: %empty
+
+   36 multipoint: $@8 LPAREN multipoint_int RPAREN
+
+   37 multipoint_int: mpoint_element
+   38               | multipoint_int COMMA mpoint_element
+
+   39 mpoint_element: nonempty_point
+
+   40 $@9: %empty
+
+   41 mpoint_element: $@9 a_point
+
+   42 geom_linestring: LINESTRING linestring
+
+   43 $@10: %empty
+
+   44 geom_linestring: LINESTRINGM $@10 linestring
+
+   45 linestring: empty_linestring
+   46           | nonempty_linestring
+
+   47 $@11: %empty
+
+   48 empty_linestring: $@11 empty
+
+   49 $@12: %empty
+
+   50 nonempty_linestring: $@12 linestring_1
+
+   51 $@13: %empty
+
+   52 nonempty_linestring_closed: $@13 linestring_1
+
+   53 $@14: %empty
+
+   54 linestring_1: $@14 LPAREN linestring_int RPAREN
+
+   55 linestring_int: a_point
+   56               | linestring_int COMMA a_point
+
+   57 geom_circularstring: CIRCULARSTRING circularstring
+
+   58 $@15: %empty
+
+   59 geom_circularstring: CIRCULARSTRINGM $@15 circularstring
+
+   60 geom_circularstring_closed: CIRCULARSTRING circularstring_closed
+
+   61 $@16: %empty
+
+   62 geom_circularstring_closed: CIRCULARSTRINGM $@16 circularstring_closed
+
+   63 circularstring: empty_circularstring
+   64               | nonempty_circularstring
+
+   65 circularstring_closed: empty_circularstring
+   66                      | nonempty_circularstring_closed
+
+   67 $@17: %empty
+
+   68 empty_circularstring: $@17 empty
+
+   69 $@18: %empty
+
+   70 nonempty_circularstring: $@18 circularstring_1
+
+   71 $@19: %empty
+
+   72 nonempty_circularstring_closed: $@19 circularstring_1
+
+   73 $@20: %empty
+
+   74 circularstring_1: $@20 LPAREN circularstring_int RPAREN
+
+   75 circularstring_int: a_point
+   76                   | circularstring_int COMMA a_point
+
+   77 $@21: %empty
+
+   78 geom_compoundcurve: COMPOUNDCURVE $@21 compoundcurve
+
+   79 $@22: %empty
+
+   80 geom_compoundcurve: COMPOUNDCURVEM $@22 compoundcurve
+
+   81 compoundcurve: empty
+
+   82 $@23: %empty
+
+   83 compoundcurve: $@23 LPAREN compoundcurve_int RPAREN
+
+   84 compoundcurve_int: nonempty_linestring
+   85                  | geom_circularstring
+   86                  | compoundcurve_int COMMA nonempty_linestring
+   87                  | compoundcurve_int COMMA geom_circularstring
+
+   88 $@24: %empty
+
+   89 geom_multilinestring: MULTILINESTRING $@24 multilinestring
+
+   90 $@25: %empty
+
+   91 geom_multilinestring: MULTILINESTRINGM $@25 multilinestring
+
+   92 multilinestring: empty
+
+   93 $@26: %empty
+
+   94 multilinestring: $@26 LPAREN multilinestring_int RPAREN
+
+   95 multilinestring_int: nonempty_linestring
+   96                    | multilinestring_int COMMA nonempty_linestring
+
+   97 $@27: %empty
+
+   98 geom_multicurve: MULTICURVE $@27 multicurve
+
+   99 $@28: %empty
+
+  100 geom_multicurve: MULTICURVEM $@28 multicurve
+
+  101 multicurve: empty
+
+  102 $@29: %empty
+
+  103 multicurve: $@29 LPAREN multicurve_int RPAREN
+
+  104 multicurve_int: nonempty_linestring
+  105               | geom_circularstring
+  106               | multicurve_int COMMA nonempty_linestring
+  107               | multicurve_int COMMA geom_circularstring
+
+  108 geom_polygon: POLYGON polygon
+
+  109 $@30: %empty
+
+  110 geom_polygon: POLYGONM $@30 polygon
+
+  111 polygon: empty_polygon
+  112        | nonempty_polygon
+
+  113 $@31: %empty
+
+  114 empty_polygon: $@31 empty
+
+  115 $@32: %empty
+
+  116 nonempty_polygon: $@32 polygon_1
+
+  117 $@33: %empty
+
+  118 polygon_1: $@33 LPAREN polygon_int RPAREN
+
+  119 polygon_int: linestring_1
+  120            | polygon_int COMMA linestring_1
+
+  121 $@34: %empty
+
+  122 geom_curvepolygon: CURVEPOLYGON $@34 curvepolygon
+
+  123 $@35: %empty
+
+  124 geom_curvepolygon: CURVEPOLYGONM $@35 curvepolygon
+
+  125 curvepolygon: empty
+
+  126 $@36: %empty
+
+  127 curvepolygon: $@36 LPAREN curvepolygon_int RPAREN
+
+  128 curvepolygon_int: nonempty_linestring_closed
+  129                 | geom_circularstring_closed
+  130                 | curvepolygon_int COMMA nonempty_linestring_closed
+  131                 | curvepolygon_int COMMA geom_circularstring_closed
+
+  132 $@37: %empty
+
+  133 geom_multipolygon: MULTIPOLYGON $@37 multipolygon
+
+  134 $@38: %empty
+
+  135 geom_multipolygon: MULTIPOLYGONM $@38 multipolygon
+
+  136 multipolygon: empty
+
+  137 $@39: %empty
+
+  138 multipolygon: $@39 LPAREN multipolygon_int RPAREN
+
+  139 multipolygon_int: nonempty_polygon
+  140                 | multipolygon_int COMMA nonempty_polygon
+
+  141 $@40: %empty
+
+  142 geom_multisurface: MULTISURFACE $@40 multisurface
+
+  143 $@41: %empty
+
+  144 geom_multisurface: MULTISURFACEM $@41 multisurface
+
+  145 multisurface: empty
+
+  146 $@42: %empty
+
+  147 multisurface: $@42 LPAREN multisurface_int RPAREN
+
+  148 multisurface_int: nonempty_polygon
+  149                 | geom_curvepolygon
+  150                 | multisurface_int COMMA nonempty_polygon
+  151                 | multisurface_int COMMA geom_curvepolygon
+
+  152 $@43: %empty
+
+  153 geom_geometrycollection: GEOMETRYCOLLECTION $@43 geometrycollection
+
+  154 $@44: %empty
+
+  155 geom_geometrycollection: GEOMETRYCOLLECTIONM $@44 geometrycollection
+
+  156 geometrycollection: empty
+
+  157 $@45: %empty
+
+  158 geometrycollection: $@45 LPAREN geometrycollection_int RPAREN
+
+  159 geometrycollection_int: empty
+  160                       | geometry_int
+  161                       | geometrycollection_int COMMA geometry_int
+
+  162 a_point: point_2d
+  163        | point_3d
+  164        | point_4d
+
+  165 point_2d: VALUE VALUE
+
+  166 point_3d: VALUE VALUE VALUE
+
+  167 point_4d: VALUE VALUE VALUE VALUE
+
+  168 empty: EMPTY
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    POINT (258) 20
+    LINESTRING (259) 42
+    POLYGON (260) 108
+    MULTIPOINT (261) 31
+    MULTILINESTRING (262) 89
+    MULTIPOLYGON (263) 133
+    GEOMETRYCOLLECTION (264) 153
+    CIRCULARSTRING (265) 57 60
+    COMPOUNDCURVE (266) 78
+    CURVEPOLYGON (267) 122
+    MULTICURVE (268) 98
+    MULTISURFACE (269) 142
+    POINTM (270) 22
+    LINESTRINGM (271) 44
+    POLYGONM (272) 110
+    MULTIPOINTM (273) 33
+    MULTILINESTRINGM (274) 91
+    MULTIPOLYGONM (275) 135
+    GEOMETRYCOLLECTIONM (276) 155
+    CIRCULARSTRINGM (277) 59 62
+    COMPOUNDCURVEM (278) 80
+    CURVEPOLYGONM (279) 124
+    MULTICURVEM (280) 100
+    MULTISURFACEM (281) 144
+    SRID (282) 18
+    EMPTY (283) 168
+    VALUE <value> (284) 18 165 166 167
+    LPAREN (285) 29 36 54 74 83 94 103 118 127 138 147 158
+    RPAREN (286) 29 36 54 74 83 94 103 118 127 138 147 158
+    COMMA (287) 38 56 76 86 87 96 106 107 120 130 131 140 150 151 161
+    EQUALS (288) 18
+    SEMICOLON (289) 2
+    WKB <wkb> (290) 19
+
+
+Nonterminals, with rules where they appear
+
+    $accept (36)
+        on left: 0
+    geometry (37)
+        on left: 2 4
+        on right: 0
+    $@1 (38)
+        on left: 1
+        on right: 2
+    $@2 (39)
+        on left: 3
+        on right: 4
+    geometry_int (40)
+        on left: 5 6 7 8 9 10 11 12 13 14 15 16 17
+        on right: 2 4 160 161
+    srid (41)
+        on left: 18
+        on right: 2
+    geom_wkb (42)
+        on left: 19
+        on right: 5
+    geom_point (43)
+        on left: 20 22
+        on right: 6
+    $@3 (44)
+        on left: 21
+        on right: 22
+    point (45)
+        on left: 23 24
+        on right: 20 22
+    empty_point (46)
+        on left: 26
+        on right: 23
+    $@4 (47)
+        on left: 25
+        on right: 26
+    nonempty_point (48)
+        on left: 28
+        on right: 24 39
+    $@5 (49)
+        on left: 27
+        on right: 28
+    point_int (50)
+        on left: 29
+        on right: 28
+    geom_multipoint (51)
+        on left: 31 33
+        on right: 12
+    $@6 (52)
+        on left: 30
+        on right: 31
+    $@7 (53)
+        on left: 32
+        on right: 33
+    multipoint (54)
+        on left: 34 36
+        on right: 31 33
+    $@8 (55)
+        on left: 35
+        on right: 36
+    multipoint_int (56)
+        on left: 37 38
+        on right: 36 38
+    mpoint_element (57)
+        on left: 39 41
+        on right: 37 38
+    $@9 (58)
+        on left: 40
+        on right: 41
+    geom_linestring (59)
+        on left: 42 44
+        on right: 7
+    $@10 (60)
+        on left: 43
+        on right: 44
+    linestring (61)
+        on left: 45 46
+        on right: 42 44
+    empty_linestring (62)
+        on left: 48
+        on right: 45
+    $@11 (63)
+        on left: 47
+        on right: 48
+    nonempty_linestring (64)
+        on left: 50
+        on right: 46 84 86 95 96 104 106
+    $@12 (65)
+        on left: 49
+        on right: 50
+    nonempty_linestring_closed (66)
+        on left: 52
+        on right: 128 130
+    $@13 (67)
+        on left: 51
+        on right: 52
+    linestring_1 (68)
+        on left: 54
+        on right: 50 52 119 120
+    $@14 (69)
+        on left: 53
+        on right: 54
+    linestring_int (70)
+        on left: 55 56
+        on right: 54 56
+    geom_circularstring (71)
+        on left: 57 59
+        on right: 8 85 87 105 107
+    $@15 (72)
+        on left: 58
+        on right: 59
+    geom_circularstring_closed (73)
+        on left: 60 62
+        on right: 129 131
+    $@16 (74)
+        on left: 61
+        on right: 62
+    circularstring (75)
+        on left: 63 64
+        on right: 57 59
+    circularstring_closed (76)
+        on left: 65 66
+        on right: 60 62
+    empty_circularstring (77)
+        on left: 68
+        on right: 63 65
+    $@17 (78)
+        on left: 67
+        on right: 68
+    nonempty_circularstring (79)
+        on left: 70
+        on right: 64
+    $@18 (80)
+        on left: 69
+        on right: 70
+    nonempty_circularstring_closed (81)
+        on left: 72
+        on right: 66
+    $@19 (82)
+        on left: 71
+        on right: 72
+    circularstring_1 (83)
+        on left: 74
+        on right: 70 72
+    $@20 (84)
+        on left: 73
+        on right: 74
+    circularstring_int (85)
+        on left: 75 76
+        on right: 74 76
+    geom_compoundcurve (86)
+        on left: 78 80
+        on right: 10
+    $@21 (87)
+        on left: 77
+        on right: 78
+    $@22 (88)
+        on left: 79
+        on right: 80
+    compoundcurve (89)
+        on left: 81 83
+        on right: 78 80
+    $@23 (90)
+        on left: 82
+        on right: 83
+    compoundcurve_int (91)
+        on left: 84 85 86 87
+        on right: 83 86 87
+    geom_multilinestring (92)
+        on left: 89 91
+        on right: 13
+    $@24 (93)
+        on left: 88
+        on right: 89
+    $@25 (94)
+        on left: 90
+        on right: 91
+    multilinestring (95)
+        on left: 92 94
+        on right: 89 91
+    $@26 (96)
+        on left: 93
+        on right: 94
+    multilinestring_int (97)
+        on left: 95 96
+        on right: 94 96
+    geom_multicurve (98)
+        on left: 98 100
+        on right: 14
+    $@27 (99)
+        on left: 97
+        on right: 98
+    $@28 (100)
+        on left: 99
+        on right: 100
+    multicurve (101)
+        on left: 101 103
+        on right: 98 100
+    $@29 (102)
+        on left: 102
+        on right: 103
+    multicurve_int (103)
+        on left: 104 105 106 107
+        on right: 103 106 107
+    geom_polygon (104)
+        on left: 108 110
+        on right: 9
+    $@30 (105)
+        on left: 109
+        on right: 110
+    polygon (106)
+        on left: 111 112
+        on right: 108 110
+    empty_polygon (107)
+        on left: 114
+        on right: 111
+    $@31 (108)
+        on left: 113
+        on right: 114
+    nonempty_polygon (109)
+        on left: 116
+        on right: 112 139 140 148 150
+    $@32 (110)
+        on left: 115
+        on right: 116
+    polygon_1 (111)
+        on left: 118
+        on right: 116
+    $@33 (112)
+        on left: 117
+        on right: 118
+    polygon_int (113)
+        on left: 119 120
+        on right: 118 120
+    geom_curvepolygon (114)
+        on left: 122 124
+        on right: 11 149 151
+    $@34 (115)
+        on left: 121
+        on right: 122
+    $@35 (116)
+        on left: 123
+        on right: 124
+    curvepolygon (117)
+        on left: 125 127
+        on right: 122 124
+    $@36 (118)
+        on left: 126
+        on right: 127
+    curvepolygon_int (119)
+        on left: 128 129 130 131
+        on right: 127 130 131
+    geom_multipolygon (120)
+        on left: 133 135
+        on right: 15
+    $@37 (121)
+        on left: 132
+        on right: 133
+    $@38 (122)
+        on left: 134
+        on right: 135
+    multipolygon (123)
+        on left: 136 138
+        on right: 133 135
+    $@39 (124)
+        on left: 137
+        on right: 138
+    multipolygon_int (125)
+        on left: 139 140
+        on right: 138 140
+    geom_multisurface (126)
+        on left: 142 144
+        on right: 16
+    $@40 (127)
+        on left: 141
+        on right: 142
+    $@41 (128)
+        on left: 143
+        on right: 144
+    multisurface (129)
+        on left: 145 147
+        on right: 142 144
+    $@42 (130)
+        on left: 146
+        on right: 147
+    multisurface_int (131)
+        on left: 148 149 150 151
+        on right: 147 150 151
+    geom_geometrycollection (132)
+        on left: 153 155
+        on right: 17
+    $@43 (133)
+        on left: 152
+        on right: 153
+    $@44 (134)
+        on left: 154
+        on right: 155
+    geometrycollection (135)
+        on left: 156 158
+        on right: 153 155
+    $@45 (136)
+        on left: 157
+        on right: 158
+    geometrycollection_int (137)
+        on left: 159 160 161
+        on right: 158 161
+    a_point (138)
+        on left: 162 163 164
+        on right: 29 41 55 56 75 76
+    point_2d (139)
+        on left: 165
+        on right: 162
+    point_3d (140)
+        on left: 166
+        on right: 163
+    point_4d (141)
+        on left: 167
+        on right: 164
+    empty (142)
+        on left: 168
+        on right: 26 34 48 68 81 92 101 114 125 136 145 156 159
+
+
+State 0
+
+    0 $accept: . geometry $end
+
+    SRID  shift, and go to state 1
+
+    $default  reduce using rule 3 ($@2)
+
+    geometry  go to state 2
+    $@2       go to state 3
+    srid      go to state 4
+
+
+State 1
+
+   18 srid: SRID . EQUALS VALUE
+
+    EQUALS  shift, and go to state 5
+
+
+State 2
+
+    0 $accept: geometry . $end
+
+    $end  shift, and go to state 6
+
+
+State 3
+
+    4 geometry: $@2 . geometry_int
+
+    POINT                shift, and go to state 7
+    LINESTRING           shift, and go to state 8
+    POLYGON              shift, and go to state 9
+    MULTIPOINT           shift, and go to state 10
+    MULTILINESTRING      shift, and go to state 11
+    MULTIPOLYGON         shift, and go to state 12
+    GEOMETRYCOLLECTION   shift, and go to state 13
+    CIRCULARSTRING       shift, and go to state 14
+    COMPOUNDCURVE        shift, and go to state 15
+    CURVEPOLYGON         shift, and go to state 16
+    MULTICURVE           shift, and go to state 17
+    MULTISURFACE         shift, and go to state 18
+    POINTM               shift, and go to state 19
+    LINESTRINGM          shift, and go to state 20
+    POLYGONM             shift, and go to state 21
+    MULTIPOINTM          shift, and go to state 22
+    MULTILINESTRINGM     shift, and go to state 23
+    MULTIPOLYGONM        shift, and go to state 24
+    GEOMETRYCOLLECTIONM  shift, and go to state 25
+    CIRCULARSTRINGM      shift, and go to state 26
+    COMPOUNDCURVEM       shift, and go to state 27
+    CURVEPOLYGONM        shift, and go to state 28
+    MULTICURVEM          shift, and go to state 29
+    MULTISURFACEM        shift, and go to state 30
+    WKB                  shift, and go to state 31
+
+    geometry_int             go to state 32
+    geom_wkb                 go to state 33
+    geom_point               go to state 34
+    geom_multipoint          go to state 35
+    geom_linestring          go to state 36
+    geom_circularstring      go to state 37
+    geom_compoundcurve       go to state 38
+    geom_multilinestring     go to state 39
+    geom_multicurve          go to state 40
+    geom_polygon             go to state 41
+    geom_curvepolygon        go to state 42
+    geom_multipolygon        go to state 43
+    geom_multisurface        go to state 44
+    geom_geometrycollection  go to state 45
+
+
+State 4
+
+    2 geometry: srid . SEMICOLON $@1 geometry_int
+
+    SEMICOLON  shift, and go to state 46
+
+
+State 5
+
+   18 srid: SRID EQUALS . VALUE
+
+    VALUE  shift, and go to state 47
+
+
+State 6
+
+    0 $accept: geometry $end .
+
+    $default  accept
+
+
+State 7
+
+   20 geom_point: POINT . point
+
+    LPAREN    reduce using rule 27 ($@5)
+    $default  reduce using rule 25 ($@4)
+
+    point           go to state 48
+    empty_point     go to state 49
+    $@4             go to state 50
+    nonempty_point  go to state 51
+    $@5             go to state 52
+
+
+State 8
+
+   42 geom_linestring: LINESTRING . linestring
+
+    LPAREN    reduce using rule 49 ($@12)
+    $default  reduce using rule 47 ($@11)
+
+    linestring           go to state 53
+    empty_linestring     go to state 54
+    $@11                 go to state 55
+    nonempty_linestring  go to state 56
+    $@12                 go to state 57
+
+
+State 9
+
+  108 geom_polygon: POLYGON . polygon
+
+    LPAREN    reduce using rule 115 ($@32)
+    $default  reduce using rule 113 ($@31)
+
+    polygon           go to state 58
+    empty_polygon     go to state 59
+    $@31              go to state 60
+    nonempty_polygon  go to state 61
+    $@32              go to state 62
+
+
+State 10
+
+   31 geom_multipoint: MULTIPOINT . $@6 multipoint
+
+    $default  reduce using rule 30 ($@6)
+
+    $@6  go to state 63
+
+
+State 11
+
+   89 geom_multilinestring: MULTILINESTRING . $@24 multilinestring
+
+    $default  reduce using rule 88 ($@24)
+
+    $@24  go to state 64
+
+
+State 12
+
+  133 geom_multipolygon: MULTIPOLYGON . $@37 multipolygon
+
+    $default  reduce using rule 132 ($@37)
+
+    $@37  go to state 65
+
+
+State 13
+
+  153 geom_geometrycollection: GEOMETRYCOLLECTION . $@43 geometrycollection
+
+    $default  reduce using rule 152 ($@43)
+
+    $@43  go to state 66
+
+
+State 14
+
+   57 geom_circularstring: CIRCULARSTRING . circularstring
+
+    LPAREN    reduce using rule 69 ($@18)
+    $default  reduce using rule 67 ($@17)
+
+    circularstring           go to state 67
+    empty_circularstring     go to state 68
+    $@17                     go to state 69
+    nonempty_circularstring  go to state 70
+    $@18                     go to state 71
+
+
+State 15
+
+   78 geom_compoundcurve: COMPOUNDCURVE . $@21 compoundcurve
+
+    $default  reduce using rule 77 ($@21)
+
+    $@21  go to state 72
+
+
+State 16
+
+  122 geom_curvepolygon: CURVEPOLYGON . $@34 curvepolygon
+
+    $default  reduce using rule 121 ($@34)
+
+    $@34  go to state 73
+
+
+State 17
+
+   98 geom_multicurve: MULTICURVE . $@27 multicurve
+
+    $default  reduce using rule 97 ($@27)
+
+    $@27  go to state 74
+
+
+State 18
+
+  142 geom_multisurface: MULTISURFACE . $@40 multisurface
+
+    $default  reduce using rule 141 ($@40)
+
+    $@40  go to state 75
+
+
+State 19
+
+   22 geom_point: POINTM . $@3 point
+
+    $default  reduce using rule 21 ($@3)
+
+    $@3  go to state 76
+
+
+State 20
+
+   44 geom_linestring: LINESTRINGM . $@10 linestring
+
+    $default  reduce using rule 43 ($@10)
+
+    $@10  go to state 77
+
+
+State 21
+
+  110 geom_polygon: POLYGONM . $@30 polygon
+
+    $default  reduce using rule 109 ($@30)
+
+    $@30  go to state 78
+
+
+State 22
+
+   33 geom_multipoint: MULTIPOINTM . $@7 multipoint
+
+    $default  reduce using rule 32 ($@7)
+
+    $@7  go to state 79
+
+
+State 23
+
+   91 geom_multilinestring: MULTILINESTRINGM . $@25 multilinestring
+
+    $default  reduce using rule 90 ($@25)
+
+    $@25  go to state 80
+
+
+State 24
+
+  135 geom_multipolygon: MULTIPOLYGONM . $@38 multipolygon
+
+    $default  reduce using rule 134 ($@38)
+
+    $@38  go to state 81
+
+
+State 25
+
+  155 geom_geometrycollection: GEOMETRYCOLLECTIONM . $@44 geometrycollection
+
+    $default  reduce using rule 154 ($@44)
+
+    $@44  go to state 82
+
+
+State 26
+
+   59 geom_circularstring: CIRCULARSTRINGM . $@15 circularstring
+
+    $default  reduce using rule 58 ($@15)
+
+    $@15  go to state 83
+
+
+State 27
+
+   80 geom_compoundcurve: COMPOUNDCURVEM . $@22 compoundcurve
+
+    $default  reduce using rule 79 ($@22)
+
+    $@22  go to state 84
+
+
+State 28
+
+  124 geom_curvepolygon: CURVEPOLYGONM . $@35 curvepolygon
+
+    $default  reduce using rule 123 ($@35)
+
+    $@35  go to state 85
+
+
+State 29
+
+  100 geom_multicurve: MULTICURVEM . $@28 multicurve
+
+    $default  reduce using rule 99 ($@28)
+
+    $@28  go to state 86
+
+
+State 30
+
+  144 geom_multisurface: MULTISURFACEM . $@41 multisurface
+
+    $default  reduce using rule 143 ($@41)
+
+    $@41  go to state 87
+
+
+State 31
+
+   19 geom_wkb: WKB .
+
+    $default  reduce using rule 19 (geom_wkb)
+
+
+State 32
+
+    4 geometry: $@2 geometry_int .
+
+    $default  reduce using rule 4 (geometry)
+
+
+State 33
+
+    5 geometry_int: geom_wkb .
+
+    $default  reduce using rule 5 (geometry_int)
+
+
+State 34
+
+    6 geometry_int: geom_point .
+
+    $default  reduce using rule 6 (geometry_int)
+
+
+State 35
+
+   12 geometry_int: geom_multipoint .
+
+    $default  reduce using rule 12 (geometry_int)
+
+
+State 36
+
+    7 geometry_int: geom_linestring .
+
+    $default  reduce using rule 7 (geometry_int)
+
+
+State 37
+
+    8 geometry_int: geom_circularstring .
+
+    $default  reduce using rule 8 (geometry_int)
+
+
+State 38
+
+   10 geometry_int: geom_compoundcurve .
+
+    $default  reduce using rule 10 (geometry_int)
+
+
+State 39
+
+   13 geometry_int: geom_multilinestring .
+
+    $default  reduce using rule 13 (geometry_int)
+
+
+State 40
+
+   14 geometry_int: geom_multicurve .
+
+    $default  reduce using rule 14 (geometry_int)
+
+
+State 41
+
+    9 geometry_int: geom_polygon .
+
+    $default  reduce using rule 9 (geometry_int)
+
+
+State 42
+
+   11 geometry_int: geom_curvepolygon .
+
+    $default  reduce using rule 11 (geometry_int)
+
+
+State 43
+
+   15 geometry_int: geom_multipolygon .
+
+    $default  reduce using rule 15 (geometry_int)
+
+
+State 44
+
+   16 geometry_int: geom_multisurface .
+
+    $default  reduce using rule 16 (geometry_int)
+
+
+State 45
+
+   17 geometry_int: geom_geometrycollection .
+
+    $default  reduce using rule 17 (geometry_int)
+
+
+State 46
+
+    2 geometry: srid SEMICOLON . $@1 geometry_int
+
+    $default  reduce using rule 1 ($@1)
+
+    $@1  go to state 88
+
+
+State 47
+
+   18 srid: SRID EQUALS VALUE .
+
+    $default  reduce using rule 18 (srid)
+
+
+State 48
+
+   20 geom_point: POINT point .
+
+    $default  reduce using rule 20 (geom_point)
+
+
+State 49
+
+   23 point: empty_point .
+
+    $default  reduce using rule 23 (point)
+
+
+State 50
+
+   26 empty_point: $@4 . empty
+
+    EMPTY  shift, and go to state 89
+
+    empty  go to state 90
+
+
+State 51
+
+   24 point: nonempty_point .
+
+    $default  reduce using rule 24 (point)
+
+
+State 52
+
+   28 nonempty_point: $@5 . point_int
+
+    LPAREN  shift, and go to state 91
+
+    point_int  go to state 92
+
+
+State 53
+
+   42 geom_linestring: LINESTRING linestring .
+
+    $default  reduce using rule 42 (geom_linestring)
+
+
+State 54
+
+   45 linestring: empty_linestring .
+
+    $default  reduce using rule 45 (linestring)
+
+
+State 55
+
+   48 empty_linestring: $@11 . empty
+
+    EMPTY  shift, and go to state 89
+
+    empty  go to state 93
+
+
+State 56
+
+   46 linestring: nonempty_linestring .
+
+    $default  reduce using rule 46 (linestring)
+
+
+State 57
+
+   50 nonempty_linestring: $@12 . linestring_1
+
+    $default  reduce using rule 53 ($@14)
+
+    linestring_1  go to state 94
+    $@14          go to state 95
+
+
+State 58
+
+  108 geom_polygon: POLYGON polygon .
+
+    $default  reduce using rule 108 (geom_polygon)
+
+
+State 59
+
+  111 polygon: empty_polygon .
+
+    $default  reduce using rule 111 (polygon)
+
+
+State 60
+
+  114 empty_polygon: $@31 . empty
+
+    EMPTY  shift, and go to state 89
+
+    empty  go to state 96
+
+
+State 61
+
+  112 polygon: nonempty_polygon .
+
+    $default  reduce using rule 112 (polygon)
+
+
+State 62
+
+  116 nonempty_polygon: $@32 . polygon_1
+
+    $default  reduce using rule 117 ($@33)
+
+    polygon_1  go to state 97
+    $@33       go to state 98
+
+
+State 63
+
+   31 geom_multipoint: MULTIPOINT $@6 . multipoint
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 35 ($@8)
+
+    multipoint  go to state 99
+    $@8         go to state 100
+    empty       go to state 101
+
+
+State 64
+
+   89 geom_multilinestring: MULTILINESTRING $@24 . multilinestring
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 93 ($@26)
+
+    multilinestring  go to state 102
+    $@26             go to state 103
+    empty            go to state 104
+
+
+State 65
+
+  133 geom_multipolygon: MULTIPOLYGON $@37 . multipolygon
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 137 ($@39)
+
+    multipolygon  go to state 105
+    $@39          go to state 106
+    empty         go to state 107
+
+
+State 66
+
+  153 geom_geometrycollection: GEOMETRYCOLLECTION $@43 . geometrycollection
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 157 ($@45)
+
+    geometrycollection  go to state 108
+    $@45                go to state 109
+    empty               go to state 110
+
+
+State 67
+
+   57 geom_circularstring: CIRCULARSTRING circularstring .
+
+    $default  reduce using rule 57 (geom_circularstring)
+
+
+State 68
+
+   63 circularstring: empty_circularstring .
+
+    $default  reduce using rule 63 (circularstring)
+
+
+State 69
+
+   68 empty_circularstring: $@17 . empty
+
+    EMPTY  shift, and go to state 89
+
+    empty  go to state 111
+
+
+State 70
+
+   64 circularstring: nonempty_circularstring .
+
+    $default  reduce using rule 64 (circularstring)
+
+
+State 71
+
+   70 nonempty_circularstring: $@18 . circularstring_1
+
+    $default  reduce using rule 73 ($@20)
+
+    circularstring_1  go to state 112
+    $@20              go to state 113
+
+
+State 72
+
+   78 geom_compoundcurve: COMPOUNDCURVE $@21 . compoundcurve
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 82 ($@23)
+
+    compoundcurve  go to state 114
+    $@23           go to state 115
+    empty          go to state 116
+
+
+State 73
+
+  122 geom_curvepolygon: CURVEPOLYGON $@34 . curvepolygon
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 126 ($@36)
+
+    curvepolygon  go to state 117
+    $@36          go to state 118
+    empty         go to state 119
+
+
+State 74
+
+   98 geom_multicurve: MULTICURVE $@27 . multicurve
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 102 ($@29)
+
+    multicurve  go to state 120
+    $@29        go to state 121
+    empty       go to state 122
+
+
+State 75
+
+  142 geom_multisurface: MULTISURFACE $@40 . multisurface
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 146 ($@42)
+
+    multisurface  go to state 123
+    $@42          go to state 124
+    empty         go to state 125
+
+
+State 76
+
+   22 geom_point: POINTM $@3 . point
+
+    LPAREN    reduce using rule 27 ($@5)
+    $default  reduce using rule 25 ($@4)
+
+    point           go to state 126
+    empty_point     go to state 49
+    $@4             go to state 50
+    nonempty_point  go to state 51
+    $@5             go to state 52
+
+
+State 77
+
+   44 geom_linestring: LINESTRINGM $@10 . linestring
+
+    LPAREN    reduce using rule 49 ($@12)
+    $default  reduce using rule 47 ($@11)
+
+    linestring           go to state 127
+    empty_linestring     go to state 54
+    $@11                 go to state 55
+    nonempty_linestring  go to state 56
+    $@12                 go to state 57
+
+
+State 78
+
+  110 geom_polygon: POLYGONM $@30 . polygon
+
+    LPAREN    reduce using rule 115 ($@32)
+    $default  reduce using rule 113 ($@31)
+
+    polygon           go to state 128
+    empty_polygon     go to state 59
+    $@31              go to state 60
+    nonempty_polygon  go to state 61
+    $@32              go to state 62
+
+
+State 79
+
+   33 geom_multipoint: MULTIPOINTM $@7 . multipoint
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 35 ($@8)
+
+    multipoint  go to state 129
+    $@8         go to state 100
+    empty       go to state 101
+
+
+State 80
+
+   91 geom_multilinestring: MULTILINESTRINGM $@25 . multilinestring
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 93 ($@26)
+
+    multilinestring  go to state 130
+    $@26             go to state 103
+    empty            go to state 104
+
+
+State 81
+
+  135 geom_multipolygon: MULTIPOLYGONM $@38 . multipolygon
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 137 ($@39)
+
+    multipolygon  go to state 131
+    $@39          go to state 106
+    empty         go to state 107
+
+
+State 82
+
+  155 geom_geometrycollection: GEOMETRYCOLLECTIONM $@44 . geometrycollection
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 157 ($@45)
+
+    geometrycollection  go to state 132
+    $@45                go to state 109
+    empty               go to state 110
+
+
+State 83
+
+   59 geom_circularstring: CIRCULARSTRINGM $@15 . circularstring
+
+    LPAREN    reduce using rule 69 ($@18)
+    $default  reduce using rule 67 ($@17)
+
+    circularstring           go to state 133
+    empty_circularstring     go to state 68
+    $@17                     go to state 69
+    nonempty_circularstring  go to state 70
+    $@18                     go to state 71
+
+
+State 84
+
+   80 geom_compoundcurve: COMPOUNDCURVEM $@22 . compoundcurve
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 82 ($@23)
+
+    compoundcurve  go to state 134
+    $@23           go to state 115
+    empty          go to state 116
+
+
+State 85
+
+  124 geom_curvepolygon: CURVEPOLYGONM $@35 . curvepolygon
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 126 ($@36)
+
+    curvepolygon  go to state 135
+    $@36          go to state 118
+    empty         go to state 119
+
+
+State 86
+
+  100 geom_multicurve: MULTICURVEM $@28 . multicurve
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 102 ($@29)
+
+    multicurve  go to state 136
+    $@29        go to state 121
+    empty       go to state 122
+
+
+State 87
+
+  144 geom_multisurface: MULTISURFACEM $@41 . multisurface
+
+    EMPTY  shift, and go to state 89
+
+    $default  reduce using rule 146 ($@42)
+
+    multisurface  go to state 137
+    $@42          go to state 124
+    empty         go to state 125
+
+
+State 88
+
+    2 geometry: srid SEMICOLON $@1 . geometry_int
+
+    POINT                shift, and go to state 7
+    LINESTRING           shift, and go to state 8
+    POLYGON              shift, and go to state 9
+    MULTIPOINT           shift, and go to state 10
+    MULTILINESTRING      shift, and go to state 11
+    MULTIPOLYGON         shift, and go to state 12
+    GEOMETRYCOLLECTION   shift, and go to state 13
+    CIRCULARSTRING       shift, and go to state 14
+    COMPOUNDCURVE        shift, and go to state 15
+    CURVEPOLYGON         shift, and go to state 16
+    MULTICURVE           shift, and go to state 17
+    MULTISURFACE         shift, and go to state 18
+    POINTM               shift, and go to state 19
+    LINESTRINGM          shift, and go to state 20
+    POLYGONM             shift, and go to state 21
+    MULTIPOINTM          shift, and go to state 22
+    MULTILINESTRINGM     shift, and go to state 23
+    MULTIPOLYGONM        shift, and go to state 24
+    GEOMETRYCOLLECTIONM  shift, and go to state 25
+    CIRCULARSTRINGM      shift, and go to state 26
+    COMPOUNDCURVEM       shift, and go to state 27
+    CURVEPOLYGONM        shift, and go to state 28
+    MULTICURVEM          shift, and go to state 29
+    MULTISURFACEM        shift, and go to state 30
+    WKB                  shift, and go to state 31
+
+    geometry_int             go to state 138
+    geom_wkb                 go to state 33
+    geom_point               go to state 34
+    geom_multipoint          go to state 35
+    geom_linestring          go to state 36
+    geom_circularstring      go to state 37
+    geom_compoundcurve       go to state 38
+    geom_multilinestring     go to state 39
+    geom_multicurve          go to state 40
+    geom_polygon             go to state 41
+    geom_curvepolygon        go to state 42
+    geom_multipolygon        go to state 43
+    geom_multisurface        go to state 44
+    geom_geometrycollection  go to state 45
+
+
+State 89
+
+  168 empty: EMPTY .
+
+    $default  reduce using rule 168 (empty)
+
+
+State 90
+
+   26 empty_point: $@4 empty .
+
+    $default  reduce using rule 26 (empty_point)
+
+
+State 91
+
+   29 point_int: LPAREN . a_point RPAREN
+
+    VALUE  shift, and go to state 139
+
+    a_point   go to state 140
+    point_2d  go to state 141
+    point_3d  go to state 142
+    point_4d  go to state 143
+
+
+State 92
+
+   28 nonempty_point: $@5 point_int .
+
+    $default  reduce using rule 28 (nonempty_point)
+
+
+State 93
+
+   48 empty_linestring: $@11 empty .
+
+    $default  reduce using rule 48 (empty_linestring)
+
+
+State 94
+
+   50 nonempty_linestring: $@12 linestring_1 .
+
+    $default  reduce using rule 50 (nonempty_linestring)
+
+
+State 95
+
+   54 linestring_1: $@14 . LPAREN linestring_int RPAREN
+
+    LPAREN  shift, and go to state 144
+
+
+State 96
+
+  114 empty_polygon: $@31 empty .
+
+    $default  reduce using rule 114 (empty_polygon)
+
+
+State 97
+
+  116 nonempty_polygon: $@32 polygon_1 .
+
+    $default  reduce using rule 116 (nonempty_polygon)
+
+
+State 98
+
+  118 polygon_1: $@33 . LPAREN polygon_int RPAREN
+
+    LPAREN  shift, and go to state 145
+
+
+State 99
+
+   31 geom_multipoint: MULTIPOINT $@6 multipoint .
+
+    $default  reduce using rule 31 (geom_multipoint)
+
+
+State 100
+
+   36 multipoint: $@8 . LPAREN multipoint_int RPAREN
+
+    LPAREN  shift, and go to state 146
+
+
+State 101
+
+   34 multipoint: empty .
+
+    $default  reduce using rule 34 (multipoint)
+
+
+State 102
+
+   89 geom_multilinestring: MULTILINESTRING $@24 multilinestring .
+
+    $default  reduce using rule 89 (geom_multilinestring)
+
+
+State 103
+
+   94 multilinestring: $@26 . LPAREN multilinestring_int RPAREN
+
+    LPAREN  shift, and go to state 147
+
+
+State 104
+
+   92 multilinestring: empty .
+
+    $default  reduce using rule 92 (multilinestring)
+
+
+State 105
+
+  133 geom_multipolygon: MULTIPOLYGON $@37 multipolygon .
+
+    $default  reduce using rule 133 (geom_multipolygon)
+
+
+State 106
+
+  138 multipolygon: $@39 . LPAREN multipolygon_int RPAREN
+
+    LPAREN  shift, and go to state 148
+
+
+State 107
+
+  136 multipolygon: empty .
+
+    $default  reduce using rule 136 (multipolygon)
+
+
+State 108
+
+  153 geom_geometrycollection: GEOMETRYCOLLECTION $@43 geometrycollection .
+
+    $default  reduce using rule 153 (geom_geometrycollection)
+
+
+State 109
+
+  158 geometrycollection: $@45 . LPAREN geometrycollection_int RPAREN
+
+    LPAREN  shift, and go to state 149
+
+
+State 110
+
+  156 geometrycollection: empty .
+
+    $default  reduce using rule 156 (geometrycollection)
+
+
+State 111
+
+   68 empty_circularstring: $@17 empty .
+
+    $default  reduce using rule 68 (empty_circularstring)
+
+
+State 112
+
+   70 nonempty_circularstring: $@18 circularstring_1 .
+
+    $default  reduce using rule 70 (nonempty_circularstring)
+
+
+State 113
+
+   74 circularstring_1: $@20 . LPAREN circularstring_int RPAREN
+
+    LPAREN  shift, and go to state 150
+
+
+State 114
+
+   78 geom_compoundcurve: COMPOUNDCURVE $@21 compoundcurve .
+
+    $default  reduce using rule 78 (geom_compoundcurve)
+
+
+State 115
+
+   83 compoundcurve: $@23 . LPAREN compoundcurve_int RPAREN
+
+    LPAREN  shift, and go to state 151
+
+
+State 116
+
+   81 compoundcurve: empty .
+
+    $default  reduce using rule 81 (compoundcurve)
+
+
+State 117
+
+  122 geom_curvepolygon: CURVEPOLYGON $@34 curvepolygon .
+
+    $default  reduce using rule 122 (geom_curvepolygon)
+
+
+State 118
+
+  127 curvepolygon: $@36 . LPAREN curvepolygon_int RPAREN
+
+    LPAREN  shift, and go to state 152
+
+
+State 119
+
+  125 curvepolygon: empty .
+
+    $default  reduce using rule 125 (curvepolygon)
+
+
+State 120
+
+   98 geom_multicurve: MULTICURVE $@27 multicurve .
+
+    $default  reduce using rule 98 (geom_multicurve)
+
+
+State 121
+
+  103 multicurve: $@29 . LPAREN multicurve_int RPAREN
+
+    LPAREN  shift, and go to state 153
+
+
+State 122
+
+  101 multicurve: empty .
+
+    $default  reduce using rule 101 (multicurve)
+
+
+State 123
+
+  142 geom_multisurface: MULTISURFACE $@40 multisurface .
+
+    $default  reduce using rule 142 (geom_multisurface)
+
+
+State 124
+
+  147 multisurface: $@42 . LPAREN multisurface_int RPAREN
+
+    LPAREN  shift, and go to state 154
+
+
+State 125
+
+  145 multisurface: empty .
+
+    $default  reduce using rule 145 (multisurface)
+
+
+State 126
+
+   22 geom_point: POINTM $@3 point .
+
+    $default  reduce using rule 22 (geom_point)
+
+
+State 127
+
+   44 geom_linestring: LINESTRINGM $@10 linestring .
+
+    $default  reduce using rule 44 (geom_linestring)
+
+
+State 128
+
+  110 geom_polygon: POLYGONM $@30 polygon .
+
+    $default  reduce using rule 110 (geom_polygon)
+
+
+State 129
+
+   33 geom_multipoint: MULTIPOINTM $@7 multipoint .
+
+    $default  reduce using rule 33 (geom_multipoint)
+
+
+State 130
+
+   91 geom_multilinestring: MULTILINESTRINGM $@25 multilinestring .
+
+    $default  reduce using rule 91 (geom_multilinestring)
+
+
+State 131
+
+  135 geom_multipolygon: MULTIPOLYGONM $@38 multipolygon .
+
+    $default  reduce using rule 135 (geom_multipolygon)
+
+
+State 132
+
+  155 geom_geometrycollection: GEOMETRYCOLLECTIONM $@44 geometrycollection .
+
+    $default  reduce using rule 155 (geom_geometrycollection)
+
+
+State 133
+
+   59 geom_circularstring: CIRCULARSTRINGM $@15 circularstring .
+
+    $default  reduce using rule 59 (geom_circularstring)
+
+
+State 134
+
+   80 geom_compoundcurve: COMPOUNDCURVEM $@22 compoundcurve .
+
+    $default  reduce using rule 80 (geom_compoundcurve)
+
+
+State 135
+
+  124 geom_curvepolygon: CURVEPOLYGONM $@35 curvepolygon .
+
+    $default  reduce using rule 124 (geom_curvepolygon)
+
+
+State 136
+
+  100 geom_multicurve: MULTICURVEM $@28 multicurve .
+
+    $default  reduce using rule 100 (geom_multicurve)
+
+
+State 137
+
+  144 geom_multisurface: MULTISURFACEM $@41 multisurface .
+
+    $default  reduce using rule 144 (geom_multisurface)
+
+
+State 138
+
+    2 geometry: srid SEMICOLON $@1 geometry_int .
+
+    $default  reduce using rule 2 (geometry)
+
+
+State 139
+
+  165 point_2d: VALUE . VALUE
+  166 point_3d: VALUE . VALUE VALUE
+  167 point_4d: VALUE . VALUE VALUE VALUE
+
+    VALUE  shift, and go to state 155
+
+
+State 140
+
+   29 point_int: LPAREN a_point . RPAREN
+
+    RPAREN  shift, and go to state 156
+
+
+State 141
+
+  162 a_point: point_2d .
+
+    $default  reduce using rule 162 (a_point)
+
+
+State 142
+
+  163 a_point: point_3d .
+
+    $default  reduce using rule 163 (a_point)
+
+
+State 143
+
+  164 a_point: point_4d .
+
+    $default  reduce using rule 164 (a_point)
+
+
+State 144
+
+   54 linestring_1: $@14 LPAREN . linestring_int RPAREN
+
+    VALUE  shift, and go to state 139
+
+    linestring_int  go to state 157
+    a_point         go to state 158
+    point_2d        go to state 141
+    point_3d        go to state 142
+    point_4d        go to state 143
+
+
+State 145
+
+  118 polygon_1: $@33 LPAREN . polygon_int RPAREN
+
+    $default  reduce using rule 53 ($@14)
+
+    linestring_1  go to state 159
+    $@14          go to state 95
+    polygon_int   go to state 160
+
+
+State 146
+
+   36 multipoint: $@8 LPAREN . multipoint_int RPAREN
+
+    VALUE     reduce using rule 40 ($@9)
+    $default  reduce using rule 27 ($@5)
+
+    nonempty_point  go to state 161
+    $@5             go to state 52
+    multipoint_int  go to state 162
+    mpoint_element  go to state 163
+    $@9             go to state 164
+
+
+State 147
+
+   94 multilinestring: $@26 LPAREN . multilinestring_int RPAREN
+
+    $default  reduce using rule 49 ($@12)
+
+    nonempty_linestring  go to state 165
+    $@12                 go to state 57
+    multilinestring_int  go to state 166
+
+
+State 148
+
+  138 multipolygon: $@39 LPAREN . multipolygon_int RPAREN
+
+    $default  reduce using rule 115 ($@32)
+
+    nonempty_polygon  go to state 167
+    $@32              go to state 62
+    multipolygon_int  go to state 168
+
+
+State 149
+
+  158 geometrycollection: $@45 LPAREN . geometrycollection_int RPAREN
+
+    POINT                shift, and go to state 7
+    LINESTRING           shift, and go to state 8
+    POLYGON              shift, and go to state 9
+    MULTIPOINT           shift, and go to state 10
+    MULTILINESTRING      shift, and go to state 11
+    MULTIPOLYGON         shift, and go to state 12
+    GEOMETRYCOLLECTION   shift, and go to state 13
+    CIRCULARSTRING       shift, and go to state 14
+    COMPOUNDCURVE        shift, and go to state 15
+    CURVEPOLYGON         shift, and go to state 16
+    MULTICURVE           shift, and go to state 17
+    MULTISURFACE         shift, and go to state 18
+    POINTM               shift, and go to state 19
+    LINESTRINGM          shift, and go to state 20
+    POLYGONM             shift, and go to state 21
+    MULTIPOINTM          shift, and go to state 22
+    MULTILINESTRINGM     shift, and go to state 23
+    MULTIPOLYGONM        shift, and go to state 24
+    GEOMETRYCOLLECTIONM  shift, and go to state 25
+    CIRCULARSTRINGM      shift, and go to state 26
+    COMPOUNDCURVEM       shift, and go to state 27
+    CURVEPOLYGONM        shift, and go to state 28
+    MULTICURVEM          shift, and go to state 29
+    MULTISURFACEM        shift, and go to state 30
+    EMPTY                shift, and go to state 89
+    WKB                  shift, and go to state 31
+
+    geometry_int             go to state 169
+    geom_wkb                 go to state 33
+    geom_point               go to state 34
+    geom_multipoint          go to state 35
+    geom_linestring          go to state 36
+    geom_circularstring      go to state 37
+    geom_compoundcurve       go to state 38
+    geom_multilinestring     go to state 39
+    geom_multicurve          go to state 40
+    geom_polygon             go to state 41
+    geom_curvepolygon        go to state 42
+    geom_multipolygon        go to state 43
+    geom_multisurface        go to state 44
+    geom_geometrycollection  go to state 45
+    geometrycollection_int   go to state 170
+    empty                    go to state 171
+
+
+State 150
+
+   74 circularstring_1: $@20 LPAREN . circularstring_int RPAREN
+
+    VALUE  shift, and go to state 139
+
+    circularstring_int  go to state 172
+    a_point             go to state 173
+    point_2d            go to state 141
+    point_3d            go to state 142
+    point_4d            go to state 143
+
+
+State 151
+
+   83 compoundcurve: $@23 LPAREN . compoundcurve_int RPAREN
+
+    CIRCULARSTRING   shift, and go to state 14
+    CIRCULARSTRINGM  shift, and go to state 26
+
+    $default  reduce using rule 49 ($@12)
+
+    nonempty_linestring  go to state 174
+    $@12                 go to state 57
+    geom_circularstring  go to state 175
+    compoundcurve_int    go to state 176
+
+
+State 152
+
+  127 curvepolygon: $@36 LPAREN . curvepolygon_int RPAREN
+
+    CIRCULARSTRING   shift, and go to state 177
+    CIRCULARSTRINGM  shift, and go to state 178
+
+    $default  reduce using rule 51 ($@13)
+
+    nonempty_linestring_closed  go to state 179
+    $@13                        go to state 180
+    geom_circularstring_closed  go to state 181
+    curvepolygon_int            go to state 182
+
+
+State 153
+
+  103 multicurve: $@29 LPAREN . multicurve_int RPAREN
+
+    CIRCULARSTRING   shift, and go to state 14
+    CIRCULARSTRINGM  shift, and go to state 26
+
+    $default  reduce using rule 49 ($@12)
+
+    nonempty_linestring  go to state 183
+    $@12                 go to state 57
+    geom_circularstring  go to state 184
+    multicurve_int       go to state 185
+
+
+State 154
+
+  147 multisurface: $@42 LPAREN . multisurface_int RPAREN
+
+    CURVEPOLYGON   shift, and go to state 16
+    CURVEPOLYGONM  shift, and go to state 28
+
+    $default  reduce using rule 115 ($@32)
+
+    nonempty_polygon   go to state 186
+    $@32               go to state 62
+    geom_curvepolygon  go to state 187
+    multisurface_int   go to state 188
+
+
+State 155
+
+  165 point_2d: VALUE VALUE .
+  166 point_3d: VALUE VALUE . VALUE
+  167 point_4d: VALUE VALUE . VALUE VALUE
+
+    VALUE  shift, and go to state 189
+
+    $default  reduce using rule 165 (point_2d)
+
+
+State 156
+
+   29 point_int: LPAREN a_point RPAREN .
+
+    $default  reduce using rule 29 (point_int)
+
+
+State 157
+
+   54 linestring_1: $@14 LPAREN linestring_int . RPAREN
+   56 linestring_int: linestring_int . COMMA a_point
+
+    RPAREN  shift, and go to state 190
+    COMMA   shift, and go to state 191
+
+
+State 158
+
+   55 linestring_int: a_point .
+
+    $default  reduce using rule 55 (linestring_int)
+
+
+State 159
+
+  119 polygon_int: linestring_1 .
+
+    $default  reduce using rule 119 (polygon_int)
+
+
+State 160
+
+  118 polygon_1: $@33 LPAREN polygon_int . RPAREN
+  120 polygon_int: polygon_int . COMMA linestring_1
+
+    RPAREN  shift, and go to state 192
+    COMMA   shift, and go to state 193
+
+
+State 161
+
+   39 mpoint_element: nonempty_point .
+
+    $default  reduce using rule 39 (mpoint_element)
+
+
+State 162
+
+   36 multipoint: $@8 LPAREN multipoint_int . RPAREN
+   38 multipoint_int: multipoint_int . COMMA mpoint_element
+
+    RPAREN  shift, and go to state 194
+    COMMA   shift, and go to state 195
+
+
+State 163
+
+   37 multipoint_int: mpoint_element .
+
+    $default  reduce using rule 37 (multipoint_int)
+
+
+State 164
+
+   41 mpoint_element: $@9 . a_point
+
+    VALUE  shift, and go to state 139
+
+    a_point   go to state 196
+    point_2d  go to state 141
+    point_3d  go to state 142
+    point_4d  go to state 143
+
+
+State 165
+
+   95 multilinestring_int: nonempty_linestring .
+
+    $default  reduce using rule 95 (multilinestring_int)
+
+
+State 166
+
+   94 multilinestring: $@26 LPAREN multilinestring_int . RPAREN
+   96 multilinestring_int: multilinestring_int . COMMA nonempty_linestring
+
+    RPAREN  shift, and go to state 197
+    COMMA   shift, and go to state 198
+
+
+State 167
+
+  139 multipolygon_int: nonempty_polygon .
+
+    $default  reduce using rule 139 (multipolygon_int)
+
+
+State 168
+
+  138 multipolygon: $@39 LPAREN multipolygon_int . RPAREN
+  140 multipolygon_int: multipolygon_int . COMMA nonempty_polygon
+
+    RPAREN  shift, and go to state 199
+    COMMA   shift, and go to state 200
+
+
+State 169
+
+  160 geometrycollection_int: geometry_int .
+
+    $default  reduce using rule 160 (geometrycollection_int)
+
+
+State 170
+
+  158 geometrycollection: $@45 LPAREN geometrycollection_int . RPAREN
+  161 geometrycollection_int: geometrycollection_int . COMMA geometry_int
+
+    RPAREN  shift, and go to state 201
+    COMMA   shift, and go to state 202
+
+
+State 171
+
+  159 geometrycollection_int: empty .
+
+    $default  reduce using rule 159 (geometrycollection_int)
+
+
+State 172
+
+   74 circularstring_1: $@20 LPAREN circularstring_int . RPAREN
+   76 circularstring_int: circularstring_int . COMMA a_point
+
+    RPAREN  shift, and go to state 203
+    COMMA   shift, and go to state 204
+
+
+State 173
+
+   75 circularstring_int: a_point .
+
+    $default  reduce using rule 75 (circularstring_int)
+
+
+State 174
+
+   84 compoundcurve_int: nonempty_linestring .
+
+    $default  reduce using rule 84 (compoundcurve_int)
+
+
+State 175
+
+   85 compoundcurve_int: geom_circularstring .
+
+    $default  reduce using rule 85 (compoundcurve_int)
+
+
+State 176
+
+   83 compoundcurve: $@23 LPAREN compoundcurve_int . RPAREN
+   86 compoundcurve_int: compoundcurve_int . COMMA nonempty_linestring
+   87                  | compoundcurve_int . COMMA geom_circularstring
+
+    RPAREN  shift, and go to state 205
+    COMMA   shift, and go to state 206
+
+
+State 177
+
+   60 geom_circularstring_closed: CIRCULARSTRING . circularstring_closed
+
+    LPAREN    reduce using rule 71 ($@19)
+    $default  reduce using rule 67 ($@17)
+
+    circularstring_closed           go to state 207
+    empty_circularstring            go to state 208
+    $@17                            go to state 69
+    nonempty_circularstring_closed  go to state 209
+    $@19                            go to state 210
+
+
+State 178
+
+   62 geom_circularstring_closed: CIRCULARSTRINGM . $@16 circularstring_closed
+
+    $default  reduce using rule 61 ($@16)
+
+    $@16  go to state 211
+
+
+State 179
+
+  128 curvepolygon_int: nonempty_linestring_closed .
+
+    $default  reduce using rule 128 (curvepolygon_int)
+
+
+State 180
+
+   52 nonempty_linestring_closed: $@13 . linestring_1
+
+    $default  reduce using rule 53 ($@14)
+
+    linestring_1  go to state 212
+    $@14          go to state 95
+
+
+State 181
+
+  129 curvepolygon_int: geom_circularstring_closed .
+
+    $default  reduce using rule 129 (curvepolygon_int)
+
+
+State 182
+
+  127 curvepolygon: $@36 LPAREN curvepolygon_int . RPAREN
+  130 curvepolygon_int: curvepolygon_int . COMMA nonempty_linestring_closed
+  131                 | curvepolygon_int . COMMA geom_circularstring_closed
+
+    RPAREN  shift, and go to state 213
+    COMMA   shift, and go to state 214
+
+
+State 183
+
+  104 multicurve_int: nonempty_linestring .
+
+    $default  reduce using rule 104 (multicurve_int)
+
+
+State 184
+
+  105 multicurve_int: geom_circularstring .
+
+    $default  reduce using rule 105 (multicurve_int)
+
+
+State 185
+
+  103 multicurve: $@29 LPAREN multicurve_int . RPAREN
+  106 multicurve_int: multicurve_int . COMMA nonempty_linestring
+  107               | multicurve_int . COMMA geom_circularstring
+
+    RPAREN  shift, and go to state 215
+    COMMA   shift, and go to state 216
+
+
+State 186
+
+  148 multisurface_int: nonempty_polygon .
+
+    $default  reduce using rule 148 (multisurface_int)
+
+
+State 187
+
+  149 multisurface_int: geom_curvepolygon .
+
+    $default  reduce using rule 149 (multisurface_int)
+
+
+State 188
+
+  147 multisurface: $@42 LPAREN multisurface_int . RPAREN
+  150 multisurface_int: multisurface_int . COMMA nonempty_polygon
+  151                 | multisurface_int . COMMA geom_curvepolygon
+
+    RPAREN  shift, and go to state 217
+    COMMA   shift, and go to state 218
+
+
+State 189
+
+  166 point_3d: VALUE VALUE VALUE .
+  167 point_4d: VALUE VALUE VALUE . VALUE
+
+    VALUE  shift, and go to state 219
+
+    $default  reduce using rule 166 (point_3d)
+
+
+State 190
+
+   54 linestring_1: $@14 LPAREN linestring_int RPAREN .
+
+    $default  reduce using rule 54 (linestring_1)
+
+
+State 191
+
+   56 linestring_int: linestring_int COMMA . a_point
+
+    VALUE  shift, and go to state 139
+
+    a_point   go to state 220
+    point_2d  go to state 141
+    point_3d  go to state 142
+    point_4d  go to state 143
+
+
+State 192
+
+  118 polygon_1: $@33 LPAREN polygon_int RPAREN .
+
+    $default  reduce using rule 118 (polygon_1)
+
+
+State 193
+
+  120 polygon_int: polygon_int COMMA . linestring_1
+
+    $default  reduce using rule 53 ($@14)
+
+    linestring_1  go to state 221
+    $@14          go to state 95
+
+
+State 194
+
+   36 multipoint: $@8 LPAREN multipoint_int RPAREN .
+
+    $default  reduce using rule 36 (multipoint)
+
+
+State 195
+
+   38 multipoint_int: multipoint_int COMMA . mpoint_element
+
+    VALUE     reduce using rule 40 ($@9)
+    $default  reduce using rule 27 ($@5)
+
+    nonempty_point  go to state 161
+    $@5             go to state 52
+    mpoint_element  go to state 222
+    $@9             go to state 164
+
+
+State 196
+
+   41 mpoint_element: $@9 a_point .
+
+    $default  reduce using rule 41 (mpoint_element)
+
+
+State 197
+
+   94 multilinestring: $@26 LPAREN multilinestring_int RPAREN .
+
+    $default  reduce using rule 94 (multilinestring)
+
+
+State 198
+
+   96 multilinestring_int: multilinestring_int COMMA . nonempty_linestring
+
+    $default  reduce using rule 49 ($@12)
+
+    nonempty_linestring  go to state 223
+    $@12                 go to state 57
+
+
+State 199
+
+  138 multipolygon: $@39 LPAREN multipolygon_int RPAREN .
+
+    $default  reduce using rule 138 (multipolygon)
+
+
+State 200
+
+  140 multipolygon_int: multipolygon_int COMMA . nonempty_polygon
+
+    $default  reduce using rule 115 ($@32)
+
+    nonempty_polygon  go to state 224
+    $@32              go to state 62
+
+
+State 201
+
+  158 geometrycollection: $@45 LPAREN geometrycollection_int RPAREN .
+
+    $default  reduce using rule 158 (geometrycollection)
+
+
+State 202
+
+  161 geometrycollection_int: geometrycollection_int COMMA . geometry_int
+
+    POINT                shift, and go to state 7
+    LINESTRING           shift, and go to state 8
+    POLYGON              shift, and go to state 9
+    MULTIPOINT           shift, and go to state 10
+    MULTILINESTRING      shift, and go to state 11
+    MULTIPOLYGON         shift, and go to state 12
+    GEOMETRYCOLLECTION   shift, and go to state 13
+    CIRCULARSTRING       shift, and go to state 14
+    COMPOUNDCURVE        shift, and go to state 15
+    CURVEPOLYGON         shift, and go to state 16
+    MULTICURVE           shift, and go to state 17
+    MULTISURFACE         shift, and go to state 18
+    POINTM               shift, and go to state 19
+    LINESTRINGM          shift, and go to state 20
+    POLYGONM             shift, and go to state 21
+    MULTIPOINTM          shift, and go to state 22
+    MULTILINESTRINGM     shift, and go to state 23
+    MULTIPOLYGONM        shift, and go to state 24
+    GEOMETRYCOLLECTIONM  shift, and go to state 25
+    CIRCULARSTRINGM      shift, and go to state 26
+    COMPOUNDCURVEM       shift, and go to state 27
+    CURVEPOLYGONM        shift, and go to state 28
+    MULTICURVEM          shift, and go to state 29
+    MULTISURFACEM        shift, and go to state 30
+    WKB                  shift, and go to state 31
+
+    geometry_int             go to state 225
+    geom_wkb                 go to state 33
+    geom_point               go to state 34
+    geom_multipoint          go to state 35
+    geom_linestring          go to state 36
+    geom_circularstring      go to state 37
+    geom_compoundcurve       go to state 38
+    geom_multilinestring     go to state 39
+    geom_multicurve          go to state 40
+    geom_polygon             go to state 41
+    geom_curvepolygon        go to state 42
+    geom_multipolygon        go to state 43
+    geom_multisurface        go to state 44
+    geom_geometrycollection  go to state 45
+
+
+State 203
+
+   74 circularstring_1: $@20 LPAREN circularstring_int RPAREN .
+
+    $default  reduce using rule 74 (circularstring_1)
+
+
+State 204
+
+   76 circularstring_int: circularstring_int COMMA . a_point
+
+    VALUE  shift, and go to state 139
+
+    a_point   go to state 226
+    point_2d  go to state 141
+    point_3d  go to state 142
+    point_4d  go to state 143
+
+
+State 205
+
+   83 compoundcurve: $@23 LPAREN compoundcurve_int RPAREN .
+
+    $default  reduce using rule 83 (compoundcurve)
+
+
+State 206
+
+   86 compoundcurve_int: compoundcurve_int COMMA . nonempty_linestring
+   87                  | compoundcurve_int COMMA . geom_circularstring
+
+    CIRCULARSTRING   shift, and go to state 14
+    CIRCULARSTRINGM  shift, and go to state 26
+
+    $default  reduce using rule 49 ($@12)
+
+    nonempty_linestring  go to state 227
+    $@12                 go to state 57
+    geom_circularstring  go to state 228
+
+
+State 207
+
+   60 geom_circularstring_closed: CIRCULARSTRING circularstring_closed .
+
+    $default  reduce using rule 60 (geom_circularstring_closed)
+
+
+State 208
+
+   65 circularstring_closed: empty_circularstring .
+
+    $default  reduce using rule 65 (circularstring_closed)
+
+
+State 209
+
+   66 circularstring_closed: nonempty_circularstring_closed .
+
+    $default  reduce using rule 66 (circularstring_closed)
+
+
+State 210
+
+   72 nonempty_circularstring_closed: $@19 . circularstring_1
+
+    $default  reduce using rule 73 ($@20)
+
+    circularstring_1  go to state 229
+    $@20              go to state 113
+
+
+State 211
+
+   62 geom_circularstring_closed: CIRCULARSTRINGM $@16 . circularstring_closed
+
+    LPAREN    reduce using rule 71 ($@19)
+    $default  reduce using rule 67 ($@17)
+
+    circularstring_closed           go to state 230
+    empty_circularstring            go to state 208
+    $@17                            go to state 69
+    nonempty_circularstring_closed  go to state 209
+    $@19                            go to state 210
+
+
+State 212
+
+   52 nonempty_linestring_closed: $@13 linestring_1 .
+
+    $default  reduce using rule 52 (nonempty_linestring_closed)
+
+
+State 213
+
+  127 curvepolygon: $@36 LPAREN curvepolygon_int RPAREN .
+
+    $default  reduce using rule 127 (curvepolygon)
+
+
+State 214
+
+  130 curvepolygon_int: curvepolygon_int COMMA . nonempty_linestring_closed
+  131                 | curvepolygon_int COMMA . geom_circularstring_closed
+
+    CIRCULARSTRING   shift, and go to state 177
+    CIRCULARSTRINGM  shift, and go to state 178
+
+    $default  reduce using rule 51 ($@13)
+
+    nonempty_linestring_closed  go to state 231
+    $@13                        go to state 180
+    geom_circularstring_closed  go to state 232
+
+
+State 215
+
+  103 multicurve: $@29 LPAREN multicurve_int RPAREN .
+
+    $default  reduce using rule 103 (multicurve)
+
+
+State 216
+
+  106 multicurve_int: multicurve_int COMMA . nonempty_linestring
+  107               | multicurve_int COMMA . geom_circularstring
+
+    CIRCULARSTRING   shift, and go to state 14
+    CIRCULARSTRINGM  shift, and go to state 26
+
+    $default  reduce using rule 49 ($@12)
+
+    nonempty_linestring  go to state 233
+    $@12                 go to state 57
+    geom_circularstring  go to state 234
+
+
+State 217
+
+  147 multisurface: $@42 LPAREN multisurface_int RPAREN .
+
+    $default  reduce using rule 147 (multisurface)
+
+
+State 218
+
+  150 multisurface_int: multisurface_int COMMA . nonempty_polygon
+  151                 | multisurface_int COMMA . geom_curvepolygon
+
+    CURVEPOLYGON   shift, and go to state 16
+    CURVEPOLYGONM  shift, and go to state 28
+
+    $default  reduce using rule 115 ($@32)
+
+    nonempty_polygon   go to state 235
+    $@32               go to state 62
+    geom_curvepolygon  go to state 236
+
+
+State 219
+
+  167 point_4d: VALUE VALUE VALUE VALUE .
+
+    $default  reduce using rule 167 (point_4d)
+
+
+State 220
+
+   56 linestring_int: linestring_int COMMA a_point .
+
+    $default  reduce using rule 56 (linestring_int)
+
+
+State 221
+
+  120 polygon_int: polygon_int COMMA linestring_1 .
+
+    $default  reduce using rule 120 (polygon_int)
+
+
+State 222
+
+   38 multipoint_int: multipoint_int COMMA mpoint_element .
+
+    $default  reduce using rule 38 (multipoint_int)
+
+
+State 223
+
+   96 multilinestring_int: multilinestring_int COMMA nonempty_linestring .
+
+    $default  reduce using rule 96 (multilinestring_int)
+
+
+State 224
+
+  140 multipolygon_int: multipolygon_int COMMA nonempty_polygon .
+
+    $default  reduce using rule 140 (multipolygon_int)
+
+
+State 225
+
+  161 geometrycollection_int: geometrycollection_int COMMA geometry_int .
+
+    $default  reduce using rule 161 (geometrycollection_int)
+
+
+State 226
+
+   76 circularstring_int: circularstring_int COMMA a_point .
+
+    $default  reduce using rule 76 (circularstring_int)
+
+
+State 227
+
+   86 compoundcurve_int: compoundcurve_int COMMA nonempty_linestring .
+
+    $default  reduce using rule 86 (compoundcurve_int)
+
+
+State 228
+
+   87 compoundcurve_int: compoundcurve_int COMMA geom_circularstring .
+
+    $default  reduce using rule 87 (compoundcurve_int)
+
+
+State 229
+
+   72 nonempty_circularstring_closed: $@19 circularstring_1 .
+
+    $default  reduce using rule 72 (nonempty_circularstring_closed)
+
+
+State 230
+
+   62 geom_circularstring_closed: CIRCULARSTRINGM $@16 circularstring_closed .
+
+    $default  reduce using rule 62 (geom_circularstring_closed)
+
+
+State 231
+
+  130 curvepolygon_int: curvepolygon_int COMMA nonempty_linestring_closed .
+
+    $default  reduce using rule 130 (curvepolygon_int)
+
+
+State 232
+
+  131 curvepolygon_int: curvepolygon_int COMMA geom_circularstring_closed .
+
+    $default  reduce using rule 131 (curvepolygon_int)
+
+
+State 233
+
+  106 multicurve_int: multicurve_int COMMA nonempty_linestring .
+
+    $default  reduce using rule 106 (multicurve_int)
+
+
+State 234
+
+  107 multicurve_int: multicurve_int COMMA geom_circularstring .
+
+    $default  reduce using rule 107 (multicurve_int)
+
+
+State 235
+
+  150 multisurface_int: multisurface_int COMMA nonempty_polygon .
+
+    $default  reduce using rule 150 (multisurface_int)
+
+
+State 236
+
+  151 multisurface_int: multisurface_int COMMA geom_curvepolygon .
+
+    $default  reduce using rule 151 (multisurface_int)

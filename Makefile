@@ -1,14 +1,37 @@
-all:
-	make -C src install
-	gem build gemspec
+REGISTRY_HOST=docker.io
+USERNAME=degauss
+NAME=$(shell basename "$(CURDIR)")
+IMAGE=$(REGISTRY_HOST)/$(USERNAME)/$(NAME)
 
-test: all
-	ruby -Ilib tests/run.rb
+.PHONY: build test shell release clean
 
-install: all
-	# gem install *.gem
+build:
+	docker build -t $(IMAGE) .
+
+test:
+	docker run --rm -v "${PWD}/test":/tmp $(IMAGE) my_address_file.csv
+
+shell:
+	docker run --rm -it --entrypoint=/bin/bash -v "${PWD}/test":/tmp $(IMAGE)
+
+release:
+ifndef VERSION
+	$(error VERSION is not set. Usage: "make release VERSION=X.X")
+endif
+ifndef DOCKER_USERNAME
+	$(error DOCKER_USERNAME is not set)
+endif
+ifndef DOCKER_PAT
+	$(error DOCKER_PAT is not set)
+endif
+	git commit -am "Release for image version $(VERSION)" --allow-empty
+	git tag -a $(VERSION) -m "${VERSION}"
+	git push origin ${VERSION}
+	git push
+	echo "${DOCKER_PAT}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+	docker tag ${IMAGE}:latest ${IMAGE}:${VERSION}
+	docker push ${IMAGE}:${VERSION}
+	docker push ${IMAGE}:latest
 
 clean:
-	make -C src clean
-	rm -f lib/geocoder/us/sqlite3.so
-	rm -f *.gem
+	docker system prune -f
