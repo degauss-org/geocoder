@@ -1,4 +1,4 @@
-# geocoder <a href='https://degauss-org.github.io/DeGAUSS/'><img src='https://github.com/degauss-org/geocoder/blob/master/DeGAUSS_hex.png' align='right' height='138.5' /></a>
+# geocoder <a href='https://degauss-org.github.io/DeGAUSS/'><img src='DeGAUSS_hex.png' align='right' height='138.5' /></a>
 
 > A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.
 
