@@ -100,4 +100,4 @@ The geocoder's output file includes the following columns:
 For detailed documentation on DeGAUSS, including general usage and installation, please see the [DeGAUSS homepage](https://degauss.org). 
 
 - [Docker installation instructions](https://github.com/degauss-org/degauss-org.github.io/wiki/Installing-Docker)
-- [Manual geocoder installation instructions](https://github.com/degauss-org/degauss-org.github.io/wiki/Geocoder-Manual-Installation)
+- [Manual geocoder installation instructions](https://github.com/degauss-org/degauss-org.github.io/wiki/Manual-Geocoder-Installation)
