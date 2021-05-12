@@ -53,6 +53,9 @@ docker run --rm -v $PWD:/tmp degauss/geocoder:3.0 my_address_file.csv
 
 will produce `my_address_file_geocoded_v3.0.csv` with added columns including `lat`, `lon`, and geocoding diagnostic information.
 
+*Note: If you are using a Windows machine to run Docker, please review [this page](https://github.com/degauss-org/degauss-org.github.io/wiki/Microsoft-Windows-Troubleshooting-and-Workarounds) for Windows-specific changes that likely need to be made to successfully use DeGAUSS.  You can ignore this if you are using macOS or linux.*
+
+
 ### Interpreting geocoding results
 
 The geocoder's output file includes the following columns: 
