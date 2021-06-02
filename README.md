@@ -48,7 +48,7 @@ Note that you can call an older version of the geocoder by specifying its versio
 If `my_address_file.csv` is a file in the current working directory with an address column named `address`, then
 
 ```sh
-docker run --rm -v $PWD:/tmp degauss/geocoder:3.0 my_address_file.csv
+docker run --rm -v $PWD:/tmp degauss/geocoder:3.0.1 my_address_file.csv
 ```
 
 will produce `my_address_file_geocoded_v3.0.csv` with added columns including `lat`, `lon`, and geocoding diagnostic information.
