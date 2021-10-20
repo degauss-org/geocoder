@@ -1,6 +1,6 @@
 #!/usr/bin/Rscript
 
-dht::greeting(geomarker_name = 'geocoder', version = '3.0',
+dht::greeting(geomarker_name = 'geocoder', version = '3.0.2',
               description = 'returns geocoded coordinates based on input address strings')
 
 setwd('/tmp')
@@ -17,7 +17,8 @@ p <- argparser::add_argument(p, '--score_threshold', default = 0.5, help = 'opti
 args <- argparser::parse_args(p)
 
 d <- readr::read_csv(args$file_name)
-# d <- readr::read_csv('my_address_file.csv')
+# d <- readr::read_csv('test/my_address_file.csv')
+# d <- readr::read_csv('test/my_address_file_missing.csv')
 
 ## must contain character column called address
 if (! 'address' %in% names(d)) stop('no column called address found in the input file', call. = FALSE)
@@ -32,43 +33,62 @@ d$non_address_text <- dht::address_is_nonaddress(d$address)
 d_excluded_for_address <- dplyr::filter(d, cincy_inst_foster_addr | po_box | non_address_text)
 d_for_geocoding <- dplyr::filter(d, !cincy_inst_foster_addr & !po_box & !non_address_text)
 
+out_template <- tibble(street = NA, zip = NA, city = NA, state = NA,
+                       lat = NA, lon = NA, score = NA, precision = NA,
+                       fips_county = NA, number = NA, prenum = NA)
+
 ## geocode
 cli::cli_alert_info('now geocoding ...', wrap = TRUE)
 geocode <- function(addr_string) {
   stopifnot(class(addr_string)=='character')
+
   out <- system2('ruby',
                  args = c('/root/geocoder/geocode.rb', shQuote(addr_string)),
-                 stderr=FALSE,stdout=TRUE) %>%
-    jsonlite::fromJSON()
-  # if geocoder returns nothing then system will return empty list
-  if (length(out) == 0) out <- tibble(street = NA, zip = NA, city = NA, state = NA,
-                                      lat = NA, lon = NA, score = NA, precision = NA)
+                 stderr=FALSE, stdout=TRUE)
+
+  if (length(out) > 0) {
+    out <- out %>%
+      jsonlite::fromJSON()
+
+    out <-
+      bind_rows(out_template, out) %>%
+      .[2,]
+  } else {
+    out <- out_template
+  }
+
   out
 }
 
-d_for_geocoding$geocodes <- mappp::mappp(d_for_geocoding$address,
-                                      geocode,
-                                      parallel = TRUE,
-                                      cache = TRUE,
-                                      cache.name = 'geocoding_cache')
+if (nrow(d_for_geocoding) > 0) {
+  d_for_geocoding$geocodes <- mappp::mappp(d_for_geocoding$address,
+                                           geocode,
+                                           parallel = TRUE,
+                                           cache = TRUE,
+                                           cache.name = 'geocoding_cache')
 
-## extract results, if a tie then take first returned result
-d_for_geocoding <- d_for_geocoding %>%
-  dplyr::mutate(row_index = 1:nrow(d_for_geocoding),
-                geocodes = purrr::map(geocodes, ~ .x %>% purrr::map(unlist) %>% as_tibble())) %>%
-  tidyr::unnest(cols = c(geocodes)) %>%
-  dplyr::group_by(row_index) %>%
-  dplyr::slice(1) %>%
-  dplyr::ungroup() %>%
-  dplyr::rename(matched_street = street,
-                matched_city = city,
-                matched_state = state,
-                matched_zip = zip) %>%
-  dplyr::select(-fips_county, -prenum, -number, -row_index) %>%
-  dplyr::mutate(precision = factor(precision,
-                            levels = c('range', 'street', 'intersection', 'zip', 'city'),
-                            ordered = TRUE)) %>%
-  dplyr::arrange(desc(precision), score)
+  ## extract results, if a tie then take first returned result
+  d_for_geocoding <- d_for_geocoding %>%
+    dplyr::mutate(row_index = 1:nrow(d_for_geocoding),
+                  geocodes = purrr::map(geocodes, ~ .x %>% purrr::map(unlist) %>% as_tibble())) %>%
+    tidyr::unnest(cols = c(geocodes)) %>%
+    dplyr::group_by(row_index) %>%
+    dplyr::slice(1) %>%
+    dplyr::ungroup() %>%
+    dplyr::rename(matched_street = street,
+                  matched_city = city,
+                  matched_state = state,
+                  matched_zip = zip) %>%
+    dplyr::select(-fips_county, -prenum, -number, -row_index) %>%
+    dplyr::mutate(precision = factor(precision,
+                                     levels = c('range', 'street', 'intersection', 'zip', 'city'),
+                                     ordered = TRUE)) %>%
+    dplyr::arrange(desc(precision), score)
+} else {
+  d_excluded_for_address <-
+    bind_rows(d_excluded_for_address, out_template) %>%
+    .[1:nrow(.)-1,]
+}
 
 ## clean up 'bad' address columns / filter to precise geocodes
 cli::cli_alert_info('geocoding complete; now filtering to precise geocodes...', wrap = TRUE)
@@ -96,7 +116,7 @@ geocode_summary <- out_file %>%
          `n (%)` = glue::glue('{n} ({`%`})'))
 
 ## write out file
-out.file.name <- paste0(gsub('.csv', '', args$file_name, fixed=TRUE),'_geocoded_v3.0.csv')
+out.file.name <- paste0(gsub('.csv', '', args$file_name, fixed=TRUE),'_geocoded_v3.0.2.csv')
 readr::write_csv(out_file, out.file.name)
 cli::cli_alert_success('FINISHED! output written to {out.file.name}', wrap = TRUE)
 
