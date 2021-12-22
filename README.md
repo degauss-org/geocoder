@@ -2,7 +2,6 @@
 
 > A geocoder that relies on offline TIGER/Line data useful for geocoding private health information.
 
-[![Docker Build Status](https://img.shields.io/docker/automated/degauss/geocoder)](https://hub.docker.com/repository/docker/degauss/geocoder/tags)
 [![GitHub Latest Tag](https://img.shields.io/github/v/tag/degauss-org/geocoder)](https://github.com/degauss-org/geocoder/releases)
 
 ## News
@@ -48,7 +47,7 @@ Note that you can call an older version of the geocoder by specifying its versio
 If `my_address_file.csv` is a file in the current working directory with an address column named `address`, then
 
 ```sh
-docker run --rm -v $PWD:/tmp degauss/geocoder:3.0.2 my_address_file.csv
+docker run --rm -v $PWD:/tmp ghcr.io/degauss-org/geocoder:3.0.2 my_address_file.csv
 ```
 
 will produce `my_address_file_geocoded_v3.0.2.csv` with added columns including `lat`, `lon`, and geocoding diagnostic information.
