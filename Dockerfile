@@ -2,7 +2,7 @@ FROM ubuntu:20.04
 
 # DeGAUSS container metadata
 ENV degauss_name="geocoder"
-ENV degauss_version="3.0.2"
+ENV degauss_version="3.1.0"
 ENV degauss_description="geocode"
 ENV degauss_argument="valid_geocode_score_threshold [default: 0.5]"
 
@@ -12,8 +12,8 @@ LABEL "org.degauss.version"="${degauss_version}"
 LABEL "org.degauss.description"="${degauss_description}"
 LABEL "org.degauss.argument"="${degauss_argument}"
 
-ADD https://geomarker.s3.us-east-2.amazonaws.com/geocoder_2019.db /opt/geocoder.db
-# COPY geocoder_2019.db /opt/geocoder.db
+ADD https://geocoder-2021.s3.amazonaws.com/geocoder.db /opt/geocoder.db
+# COPY geocoder.db /opt/geocoder.db
 
 RUN apt-get update && apt-get install -y \
     libssl-dev \

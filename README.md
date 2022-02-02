@@ -8,6 +8,10 @@
 
 Note that you can call an older version of the geocoder by specifying its version number in the docker ![tag](https://hub.docker.com/repository/docker/degauss/geocoder/tags?page=1&ordering=last_updated)
 
+### Version 3.1
+
+- the geocoder now uses **2021** TIGER/Line address range files
+
 ### Version 3.0
 
 - the geocoder now uses **2019** TIGER/Line address range files
