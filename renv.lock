@@ -296,15 +296,10 @@
     },
     "mappp": {
       "Package": "mappp",
-      "Version": "0.2.1",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "mappp",
-      "RemoteUsername": "cole-brokamp",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "2f561b25614adc302802ac6fe45a7ae15bb6e39f",
-      "Hash": "a09ccc6cf1a90b770033bbe42f23b7b7"
+      "Version": "1.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "969ed5fab0c1752ddd0a43f789c9ac4e"
     },
     "markdown": {
       "Package": "markdown",
