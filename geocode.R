@@ -116,7 +116,7 @@ geocode_summary <- out_file %>%
          `n (%)` = glue::glue('{n} ({`%`})'))
 
 ## write out file
-out.file.name <- paste0(gsub('.csv', '', args$file_name, fixed=TRUE),'_geocoded_v3.0.2.csv')
+out.file.name <- paste0(gsub('.csv', '', args$file_name, fixed=TRUE),'_geocoded_v3.1.0.csv')
 readr::write_csv(out_file, out.file.name)
 cli::cli_alert_success('FINISHED! output written to {out.file.name}', wrap = TRUE)
 
