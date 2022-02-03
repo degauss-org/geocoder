@@ -65,7 +65,7 @@ if (nrow(d_for_geocoding) > 0) {
                                            geocode,
                                            parallel = TRUE,
                                            cache = TRUE,
-                                           cache.name = 'geocoding_cache')
+                                           cache_name = 'geocoding_cache')
 
   ## extract results, if a tie then take first returned result
   d_for_geocoding <- d_for_geocoding %>%
