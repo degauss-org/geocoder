@@ -1,0 +1,8 @@
+id,address,street,zip,city,state,lat,lon,score,precision,fips_county,number,prenum,geocode_result
+55001310120,P O BOX 12345 GREEN TOWNSHIP OH 45238,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,po_box
+9000010083,3333 BURNET AVE CINCINNATI OH 45229,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,cincy_inst_foster_addr
+67100240229,foreign,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,non_address_text
+2800040021,verify,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,non_address_text
+59004140168,unknown,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,non_address_text
+50002200628,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,non_address_text
+67100040004,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,non_address_text
