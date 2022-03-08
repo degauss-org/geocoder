@@ -1,0 +1,40 @@
+name: build-deploy-pr
+on:
+  pull_request:
+jobs:
+  deploy-images:
+    runs-on: ubuntu-latest
+    env:
+      registry: ghcr.io
+      username: degauss-org
+      repository: geocoder
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: create latest tag variable
+        run: |
+          container="${{ env.registry }}/${{ env.username}}/${{ env.repository }}:latest"
+          echo "container=${container}" >> $GITHUB_ENV
+      - name: create pull request tag variable based on name of associated branch
+        if: github.event_name == 'pull_request'
+        run: |
+          versioned="${{ env.registry }}/${{ env.username}}/${{ env.repository }}:${GITHUB_HEAD_REF}"
+          echo "versioned=${versioned}" >> $GITHUB_ENV
+      - name: build container
+        run: |
+          docker build -t ${{ env.container }} .
+      - name: test run container
+        run: |
+          docker run --rm -v "${PWD}/test":/tmp ${{ env.container }} my_address_file.csv
+      - name: login to ghcr
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.registry }}
+          username: ${{ env.username }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: deploy pull request container
+        run: |
+          docker tag ${{ env.container }} ${{ env.versioned }}
+          docker push ${{ env.versioned }}
