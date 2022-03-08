@@ -19,3 +19,4 @@ geocoder.Rproj
 test/d_for_geocoding.rds
 test/geocoding_cache/
 test/tmp*
+/.Rprofile
