@@ -13,21 +13,21 @@ docker run --rm -v $PWD:/tmp ghcr.io/degauss-org/geocoder:3.1.1 my_address_file.
 
 will produce `my_address_file_geocoder_0.1.0_score_threshold_0.5.csv` with added columns:
 
-- `matched_street`, `matched_city`, `matched_state`, `matched_zip`: matched address componets (e.g., `matched_street` is the street the geocoder matched with the input address); can be used to investigate input address misspellings, typos, etc.
-- `precision`: The qualitative precision of the geocode. The value will be one of:
+- `**matched_street**`, `**matched_city**`, `**matched_state**`, `**matched_zip**`: matched address componets (e.g., `matched_street` is the street the geocoder matched with the input address); can be used to investigate input address misspellings, typos, etc.
+- `**precision**`: The method/precision of the geocode. The value will be one of:
   - `range`: interpolated based on address ranges from street segments
   - `street`:  center of the matched street
   - `intersection`: intersection of two streets
   - `zip`: centroid of the matched zip code
   - `city`: centroid of the matched city
-- `score`: The percentage of text match between the given address and the geocoded result, expressed as a number between 0 and 1. A higher score indicates a closer match. Note that each score is relative within a precision method (i.e. a `score` of `0.8` with a `precision` of `range `is not the same as a `score` of `0.8` with a `precision` of `street`). 
-- `lat` and `lon`: geocoded coordinates for matched address
-- `geocode_result`: A qualitative summary of the geocoding result. The value will be one of
+- `**score**`: The percentage of text match between the given address and the geocoded result, expressed as a number between 0 and 1. A higher score indicates a closer match. Note that each score is relative within a precision method (i.e. a `score` of `0.8` with a `precision` of `range `is not the same as a `score` of `0.8` with a `precision` of `street`). 
+- `**lat**` and `**lon**`: geocoded coordinates for matched address
+- `**geocode_result**`: A character string summarizing the geocoding result. The value will be one of
+  - `geocoded`: the address was geocoded with a `precision` of either `range` or `street` and a `score` of `0.5` or greater.
+  - `imprecise_geocode`: the address was geocoded, but results were suppressed because the `precision` was `intersection`, `zip`, or `city` and/or the `score` was less than `0.5`.
   - `po_box`: the address was not geocoded because it is a PO Box
   - `cincy_inst_foster_addr`: the address was not geocoded because it is a known institutional address, not a residential address
   - `non_address_text`: the address was not geocoded because it was blank or listed as "foreign", "verify", or "unknown" 
-  - `imprecise_geocode`: the address was geocoded, but results were suppressed because the `precision` was `intersection`, `zip`, or `city` and/or the `score` was less than `0.5`.
-  - `geocoded`: the address was geocoded with a `precision` of either `range` or `street` and a `score` of `0.5` or greater.
 	
 ### Optional Argument
 
