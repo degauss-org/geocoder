@@ -106,7 +106,7 @@ out_file <- dplyr::bind_rows(d_excluded_for_address, d_for_geocoding) %>%
       po_box ~ "po_box",
       cincy_inst_foster_addr ~ "cincy_inst_foster_addr",
       non_address_text ~ "non_address_text",
-      !precision %in% c("street", "range") | score < opt$score_threshold ~ "imprecise_geocode",
+      (!precision %in% c("street", "range")) | (score < opt$score_threshold) ~ "imprecise_geocode",
       TRUE ~ "geocoded"
     ),
     lat = ifelse(geocode_result == "imprecise_geocode", NA, lat),
