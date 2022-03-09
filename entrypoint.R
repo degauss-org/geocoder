@@ -13,7 +13,7 @@ doc <- "
 opt <- docopt::docopt(doc)
 if (is.null(opt$score_threshold)) opt$score_threshold <- 0.5
 
-d <- readr::read_csv(opt$filename)
+d <- readr::read_csv(opt$filename, show_col_types = FALSE)
 # d <- readr::read_csv('test/my_address_file.csv')
 # d <- readr::read_csv('test/my_address_file_missing.csv')
 
