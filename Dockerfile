@@ -2,7 +2,7 @@ FROM rocker/r-ver:4.1.2
 
 # DeGAUSS container metadata
 ENV degauss_name="geocoder"
-ENV degauss_version="3.1.1"
+ENV degauss_version="3.2.0"
 ENV degauss_description="geocodes"
 ENV degauss_argument="valid_geocode_score_threshold [default: 0.5]"
 
