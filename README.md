@@ -11,18 +11,18 @@ If `my_address_file.csv` is a file in the current working directory with an addr
 docker run --rm -v $PWD:/tmp ghcr.io/degauss-org/geocoder:3.1.1 my_address_file.csv
 ```
 
-will produce `my_address_file_geocoder_0.1.0_score_threshold_0.5.csv` with added columns:
+will produce `my_address_file_geocoder_3.1.1_score_threshold_0.5.csv` with added columns:
 
-- `**matched_street**`, `**matched_city**`, `**matched_state**`, `**matched_zip**`: matched address componets (e.g., `matched_street` is the street the geocoder matched with the input address); can be used to investigate input address misspellings, typos, etc.
-- `**precision**`: The method/precision of the geocode. The value will be one of:
+- **`matched_street`**, **`matched_city`**, **`matched_state`**, **`matched_zip`**: matched address componets (e.g., `matched_street` is the street the geocoder matched with the input address); can be used to investigate input address misspellings, typos, etc.
+- **`precision`**: The method/precision of the geocode. The value will be one of:
   - `range`: interpolated based on address ranges from street segments
   - `street`:  center of the matched street
   - `intersection`: intersection of two streets
   - `zip`: centroid of the matched zip code
   - `city`: centroid of the matched city
-- `**score**`: The percentage of text match between the given address and the geocoded result, expressed as a number between 0 and 1. A higher score indicates a closer match. Note that each score is relative within a precision method (i.e. a `score` of `0.8` with a `precision` of `range `is not the same as a `score` of `0.8` with a `precision` of `street`). 
-- `**lat**` and `**lon**`: geocoded coordinates for matched address
-- `**geocode_result**`: A character string summarizing the geocoding result. The value will be one of
+- **`score`**: The percentage of text match between the given address and the geocoded result, expressed as a number between 0 and 1. A higher score indicates a closer match. Note that each score is relative within a precision method (i.e. a `score` of `0.8` with a `precision` of `range `is not the same as a `score` of `0.8` with a `precision` of `street`). 
+- **`lat`** and **`lon`**: geocoded coordinates for matched address
+- **`geocode_result`**: A character string summarizing the geocoding result. The value will be one of
   - `geocoded`: the address was geocoded with a `precision` of either `range` or `street` and a `score` of `0.5` or greater.
   - `imprecise_geocode`: the address was geocoded, but results were suppressed because the `precision` was `intersection`, `zip`, or `city` and/or the `score` was less than `0.5`.
   - `po_box`: the address was not geocoded because it is a PO Box
@@ -33,7 +33,7 @@ will produce `my_address_file_geocoder_0.1.0_score_threshold_0.5.csv` with added
 
 - Geocodes with a resulting precision of `intersection`, `zip`, or `city` are returned with a missing `lat` and `lon` because they are likely too inaccurate and/or too imprecise to be used for further analysis.
 - By default, `lat` and `lon` are also returned as missing if the `score` is less than `0.5` (regardless of the precision). 
-- This threshold can be changed by including an optional argument in the docker call (e.g., `docker run --rm -v $PWD:/tmp degauss/geocoder:3.1.1 my_address_file.csv 0.4`).
+- This threshold can be changed by including an optional argument in the docker call (e.g., `docker run --rm -v $PWD:/tmp degauss/geocoder:3.1.1 my_address_file.csv 0.6`).
 
 ## Geomarker Methods
 
