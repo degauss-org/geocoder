@@ -29,6 +29,7 @@ jobs:
       - name: test container
         run: |
           docker run --rm -v "${PWD}/test":/tmp ${{ env.container }} my_address_file.csv
+          docker run --rm -v "${PWD}/test":/tmp ${{ env.container }} my_address_file.csv 0.6
       - name: login to ghcr
         uses: docker/login-action@v1
         with:
