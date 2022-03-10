@@ -10,6 +10,7 @@ build:
 
 test:
 	docker run --rm -v "${PWD}/test":/tmp $(IMAGE) my_address_file.csv
+	docker run --rm -v "${PWD}/test":/tmp $(IMAGE) my_address_file.csv 0.6
 
 shell:
 	docker run --rm -it --entrypoint=/bin/bash -v "${PWD}/test":/tmp $(IMAGE)
