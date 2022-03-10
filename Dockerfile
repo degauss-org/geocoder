@@ -32,16 +32,15 @@ RUN apt-get update && apt-get install -y \
 
 RUN gem install sqlite3 json Text
 
-RUN mkdir /root/geocoder
-WORKDIR /root/geocoder
+RUN mkdir /app
+WORKDIR /app
 
 COPY Makefile.ruby .
 COPY /src ./src
 COPY /lib ./lib
 COPY /gemspec ./gemspec
 
-RUN cd /root/geocoder \
-    && make -f Makefile.ruby install \
+RUN make -f Makefile.ruby install \
     && gem install Geocoder-US-2.0.4.gem
 
 WORKDIR /app
