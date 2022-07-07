@@ -8,10 +8,10 @@
 If `my_address_file.csv` is a file in the current working directory with an address column named `address`, then the [DeGAUSS command](https://degauss.org/using_degauss.html#DeGAUSS_Commands):
 
 ```sh
-docker run --rm -v $PWD:/tmp ghcr.io/degauss-org/geocoder:3.2.0 my_address_file.csv
+docker run --rm -v $PWD:/tmp ghcr.io/degauss-org/geocoder:3.2.1 my_address_file.csv
 ```
 
-will produce `my_address_file_geocoder_3.2.0_score_threshold_0.5.csv` with added columns:
+will produce `my_address_file_geocoder_3.2.1_score_threshold_0.5.csv` with added columns:
 
 - **`matched_street`**, **`matched_city`**, **`matched_state`**, **`matched_zip`**: matched address componets (e.g., `matched_street` is the street the geocoder matched with the input address); can be used to investigate input address misspellings, typos, etc.
 - **`precision`**: The method/precision of the geocode. The value will be one of:
