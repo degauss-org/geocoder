@@ -50,7 +50,7 @@ RUN R --quiet -e "install.packages('remotes', repos = 'https://packagemanager.rs
 RUN R --quiet -e "remotes::install_github('rstudio/renv@0.15.4')"
 
 COPY renv.lock .
-RUN R --quiet -e "renv::restore(repos = c(CRAN = 'https://packagemanager.rstudio.com/all/__linux__/focal/latest'))"
+RUN R --quiet -e "renv::restore()"
 
 COPY geocode.rb .
 COPY entrypoint.R .
