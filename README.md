@@ -8,10 +8,10 @@
 If `my_address_file.csv` is a file in the current working directory with an address column named `address`, then the [DeGAUSS command](https://degauss.org/using_degauss.html#DeGAUSS_Commands):
 
 ```sh
-docker run --rm -v $PWD:/tmp ghcr.io/degauss-org/geocoder:3.2.1 my_address_file.csv
+docker run --rm -v $PWD:/tmp ghcr.io/degauss-org/geocoder:3.3.0 my_address_file.csv
 ```
 
-will produce `my_address_file_geocoder_3.2.1_score_threshold_0.5.csv` with added columns:
+will produce `my_address_file_geocoder_3.3.0_score_threshold_0.5.csv` with added columns:
 
 - **`matched_street`**, **`matched_city`**, **`matched_state`**, **`matched_zip`**: matched address componets (e.g., `matched_street` is the street the geocoder matched with the input address); can be used to investigate input address misspellings, typos, etc.
 - **`precision`**: The method/precision of the geocode. The value will be one of:
@@ -34,6 +34,7 @@ will produce `my_address_file_geocoder_3.2.1_score_threshold_0.5.csv` with added
 - Geocodes with a resulting precision of `intersection`, `zip`, or `city` are returned with a missing `lat` and `lon` because they are likely too inaccurate and/or too imprecise to be used for further analysis.
 - By default, `lat` and `lon` are also returned as missing if the `score` is less than `0.5` (regardless of the precision). 
 - This threshold can be changed by including an optional argument in the docker call (e.g., `docker run --rm -v $PWD:/tmp degauss/geocoder:3.2.0 my_address_file.csv 0.6`).
+- Supplying `all` instead of a numeric `score_threshold` returns all geocodes regardless of `score`, `precision`, or `po_box`, `cincy_inst_foster_addr`, and `non_address_text` filters. 
 
 ## Geomarker Methods
 
