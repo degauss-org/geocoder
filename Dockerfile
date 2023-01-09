@@ -2,7 +2,7 @@ FROM rocker/r-ver:4.1.2
 
 # DeGAUSS container metadata
 ENV degauss_name="geocoder"
-ENV degauss_version="3.2.1"
+ENV degauss_version="3.3.0"
 ENV degauss_description="geocodes"
 ENV degauss_argument="valid_geocode_score_threshold [default: 0.5]"
 
@@ -50,7 +50,7 @@ RUN R --quiet -e "install.packages('remotes', repos = 'https://packagemanager.rs
 RUN R --quiet -e "remotes::install_github('rstudio/renv@0.15.4')"
 
 COPY renv.lock .
-RUN R --quiet -e "renv::restore(repos = c(CRAN = 'https://packagemanager.rstudio.com/all/__linux__/focal/latest'))"
+RUN R --quiet -e "renv::restore()"
 
 COPY geocode.rb .
 COPY entrypoint.R .
