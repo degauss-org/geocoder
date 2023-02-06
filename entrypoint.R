@@ -46,7 +46,7 @@ geocode <- function(addr_string) {
   stopifnot(class(addr_string) == "character")
 
   out <- system2("ruby",
-    args = c("/app/geocode.rb", shQuote(addr_string)),
+    args = c("/degauss/geocoder/geocode.rb", shQuote(addr_string)),
     stderr = FALSE, stdout = TRUE
   )
 
