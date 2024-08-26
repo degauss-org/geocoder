@@ -1,8 +1,8 @@
-FROM rocker/r-ver:4.1.2
+FROM rocker/r-ver:4.4.1
 
 # DeGAUSS container metadata
 ENV degauss_name="geocoder"
-ENV degauss_version="3.3.0"
+ENV degauss_version="3.4.0"
 ENV degauss_description="geocodes"
 ENV degauss_argument="valid_geocode_score_threshold [default: 0.5]"
 
@@ -28,6 +28,7 @@ RUN apt-get update && apt-get install -y \
     bison \
     gnupg \
     software-properties-common \
+    pkg-config\
     && apt-get clean
 
 RUN gem install sqlite3 json Text
@@ -46,11 +47,11 @@ RUN make -f Makefile.ruby install \
 WORKDIR /app
 
 # install required version of renv
-RUN R --quiet -e "install.packages('remotes', repos = 'https://packagemanager.rstudio.com/all/__linux__/focal/latest')"
-RUN R --quiet -e "remotes::install_github('rstudio/renv@0.15.4')"
+RUN R --quiet -e "install.packages('remotes', repos = c(CRAN = 'https://packagemanager.posit.co/cran/latest'))"
+RUN R --quiet -e "remotes::install_github('rstudio/renv@v1.0.7')"
 
 COPY renv.lock .
-RUN R --quiet -e "renv::restore()"
+RUN R --quiet -e "renv::restore(repos = c(CRAN = 'https://packagemanager.posit.co/cran/latest'))"
 
 COPY geocode.rb .
 COPY entrypoint.R .
