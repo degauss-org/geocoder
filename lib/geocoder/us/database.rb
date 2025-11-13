@@ -153,7 +153,7 @@ module Geocoder::US
         result = st.execute(*params)
         columns = result.columns.map {|c| c.to_sym}
         result.each {|row|
-           rows << Hash[*(columns.zip(row).flatten)]}
+           rows << columns.zip(row).to_h}
         
       end
       if @debug
@@ -630,7 +630,7 @@ module Geocoder::US
         unless record[:score].nil?
       record.keys.each {|k| record[k] = "" if record[k].nil? } # clean up nils
       record.delete :components unless @debug
-      record.delete_if {|k,v| k.is_a? Fixnum or
+      record.delete_if {|k,v| k.is_a? Integer or
           [:geometry, :side, :tlid, :fid, :fid1, :fid2, :street_phone,
            :city_phone, :fromhn, :tohn, :paflag, :flipped, :street_score,
            :city_score, :priority, :fips_class, :fips_place, :status].include? k}
