@@ -39,7 +39,7 @@ module Geocoder::US
                   :create => false, :dbtype => 1}
       options = defaults.merge options
       raise ArgumentError, "can't find database #{filename}" \
-        unless options[:create] or File.exists? filename
+        unless options[:create] or File.exist? filename
       @db = SQLite3::Database.new( filename )
       @st = {}
       @dbtype = options[:dbtype]

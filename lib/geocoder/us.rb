@@ -7,7 +7,7 @@ require "geocoder/us/address"
 # General usage is as follows:
 #
 #  >> require 'geocoder/us'
-#  >> db = Geocoder::US::Database.new("/opt/tiger/geocoder.db")
+#  >> db = Geocoder::US::Database.new("/opt/geocoder.db")
 #  >> p db.geocode("1600 Pennsylvania Av, Washington DC")
 #
 #  [{:pretyp=>"", :street=>"Pennsylvania", :sufdir=>"NW", :zip=>"20502",
