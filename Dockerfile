@@ -1,8 +1,8 @@
-FROM rocker/r-ver:4.4.1
+FROM rocker/r-ver:4.4
 
 # DeGAUSS container metadata
 ENV degauss_name="geocoder"
-ENV degauss_version="3.4.0"
+ENV degauss_version="3.4.1"
 ENV degauss_description="geocodes"
 ENV degauss_argument="valid_geocode_score_threshold [default: 0.5]"
 
@@ -12,10 +12,9 @@ LABEL "org.degauss.version"="${degauss_version}"
 LABEL "org.degauss.description"="${degauss_description}"
 LABEL "org.degauss.argument"="${degauss_argument}"
 
-ADD https://geomarker.s3.amazonaws.com/geocoder_2021.db /opt/geocoder.db
-# COPY geocoder.db /opt/geocoder.db
-
 RUN apt-get update && apt-get install -y \
+    curl \
+    xz-utils \
     libssl-dev \
     libssh2-1-dev \
     libcurl4-openssl-dev \
@@ -30,6 +29,12 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     pkg-config\
     && apt-get clean
+
+RUN mkdir -p /opt && \
+    curl -L https://dataverse.harvard.edu/api/access/datafile/13574277 \
+      -o /tmp/geocoder.db.xz && \
+    xz -dc /tmp/geocoder.db.xz > /opt/geocoder.db && \
+    rm -f /tmp/geocoder.db.xz
 
 RUN gem install sqlite3 json Text
 
@@ -46,12 +51,10 @@ RUN make -f Makefile.ruby install \
 
 WORKDIR /app
 
-# install required version of renv
-RUN R --quiet -e "install.packages('remotes', repos = c(CRAN = 'https://packagemanager.posit.co/cran/latest'))"
-RUN R --quiet -e "remotes::install_github('rstudio/renv@v1.0.7')"
+RUN R --quiet -e "install.packages('renv')"
 
 COPY renv.lock .
-RUN R --quiet -e "renv::restore(repos = c(CRAN = 'https://packagemanager.posit.co/cran/latest'))"
+RUN R --quiet -e "renv::restore(repos = c(CRAN = sprintf('https://p3m.dev/cran/latest/bin/linux/manylinux_2_28-%s/%s', R.version['arch'], substr(getRversion(), 1, 3))))"
 
 COPY geocode.rb .
 COPY entrypoint.R .
