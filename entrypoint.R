@@ -1,5 +1,12 @@
 #!/usr/local/bin/Rscript
 
+message(
+  "NOTICE: This DeGAUSS image is in maintenance mode.\n\n",
+  "Future development has moved to the addr and geomarker packages and containers.\n",
+  "The current command will continue to run, but consider migrating for new projects:\n\n",
+  "https://degauss.org/migrate/geocoder\n\n"
+)
+
 dht::greeting()
 
 withr::with_message_sink("/dev/null", library(dplyr))
