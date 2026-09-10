@@ -3,6 +3,11 @@
 [![](https://img.shields.io/github/v/release/degauss-org/geocoder?color=469FC2&label=version&sort=semver)](https://github.com/degauss-org/geocoder/releases)
 [![container build status](https://github.com/degauss-org/geocoder/workflows/build-deploy-release/badge.svg)](https://github.com/degauss-org/geocoder/actions/workflows/build-deploy-release.yaml)
 
+> NOTICE: This DeGAUSS image is in maintenance mode.
+> Future development has moved to the addr and geomarker packages and containers.
+> The current command will continue to run, but consider migrating for new projects:
+> https://degauss.org/migrate/geocoder
+
 ## Using
 
 If `my_address_file.csv` is a file in the current working directory with an address column named `address`, then the [DeGAUSS command](https://degauss.org/using_degauss.html#DeGAUSS_Commands):
